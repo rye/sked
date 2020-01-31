@@ -93,6 +93,9 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 	type Error = PdfParseError;
 
 	fn try_from(operation: lopdf::content::Operation) -> PdfParseResult<Operation> {
+		/// Since Object::as_f64 fails if Object is not a Object::Real, this
+		/// function can coerce an Object::Integer to an Object::Real, and will
+		/// unwrap into an Option<f64> if either of those variants are given.
 		fn to_f64(object: &Object) -> Option<f64> {
 			match object {
 				Object::Real(x) => Some(*x),
@@ -120,8 +123,26 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				}),
 				_ => unimplemented!(),
 			},
-			("scn", opds) => {
-				println!("{:?}", opds);
+			("scn", _) => {
+				// Same as SCN, but for Nonstroking operations.
+				//
+				// SCN: Operands are the same as SC, but also supports Pattern,
+				// Separation, DeviceN, and ICCBased colour spaces.
+				//
+				// SC: Set the color to use for stroking operations in a device,
+				// CIE-based (other than ICCBased), or Indexed colour space.  The number
+				// of operands required and their interpretation depends on the current
+				// stroking colour space.
+				//
+				// - For DeviceGray, CalGray, and Indexed colour spaces, one operand
+				//   shall be required.
+				//
+				// - For DeviceRGB, CalRGB, and Lab colour spaces, three operands shall
+				//   be required.
+				//
+				// - For DeviceCMYK, four operands shall be required.
+				//
+				// TODO implement
 				Ok(Self::SetColorForNonstrokingOperations)
 			}
 

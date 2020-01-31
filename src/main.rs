@@ -202,7 +202,7 @@ fn main() {
 
 	let path = path::Path::new(&file);
 
-	let mut doc = Document::load(path).unwrap();
+	let doc = Document::load(path).unwrap();
 
 	for page in doc.page_iter() {
 		let object_ids: Vec<ObjectId> = doc.get_page_contents(page);

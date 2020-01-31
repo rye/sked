@@ -22,6 +22,7 @@ impl From<std::string::FromUtf8Error> for PdfParseError {
 
 pub type PdfParseResult<T> = core::result::Result<T, PdfParseError>;
 
+#[allow(dead_code)]
 #[derive(Debug, PartialEq)]
 enum Operation {
 	BeginMarkedContentSequenceWithPropertyList,

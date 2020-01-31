@@ -1,20 +1,16 @@
 mod exception;
-pub use exception::*;
-
 mod part;
-pub use part::*;
-
 mod schedule;
-pub use schedule::*;
-
-mod specifier;
-pub use specifier::*;
-
 mod status;
-pub use status::*;
-
 mod space;
+mod specifier;
+
+pub use exception::*;
+pub use part::*;
+pub use schedule::*;
+pub use status::*;
 pub use space::*;
+pub use specifier::*;
 
 #[cfg(test)]
 mod tests {}

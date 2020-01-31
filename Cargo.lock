@@ -31,6 +31,7 @@ checksum = "f8aac770f1885fd7e387acedd76065302551364496e46b3dd00860b2f8359b9d"
 name = "build_hours"
 version = "0.1.0"
 dependencies = [
+ "chrono",
  "lopdf",
  "pdf-extract",
 ]

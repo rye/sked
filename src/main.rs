@@ -52,6 +52,9 @@ enum Operation {
 		e: f64,
 		f: f64,
 	},
+	ShowText {
+		body: String,
+	},
 	ShowTextAllowingIndividualGlyphPositioning {
 		body: String,
 	},
@@ -107,11 +110,17 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			"scn" => Ok(Self::SetColorForNonstrokingOperations),
 
 			"Tf" => {
-				match (operation.operands.get(0), operation.operands.get(1).map(to_f64).flatten()) {
-					(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize { name: name.to_vec(), size }),
+				match (
+					operation.operands.get(0),
+					operation.operands.get(1).map(to_f64).flatten(),
+				) {
+					(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
+						name: name.to_vec(),
+						size,
+					}),
 					_ => unimplemented!(),
 				}
-			},
+			}
 			"Tc" => match operation.operands.get(0).map(to_f64).flatten() {
 				Some(spacing) => Ok(Self::SetCharacterSpacing { spacing }),
 				_ => Err(PdfParseError::OperandType),
@@ -139,11 +148,11 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 						.iter()
 						.map(|element: &Object| -> PdfParseResult<String> {
 							match element {
-								Object::String(bytes, format) => {
+								Object::String(bytes, _format) => {
 									String::from_utf8(bytes.to_vec()).map_err(Into::into)
 								}
-								Object::Real(f) => Ok("".to_string()),
-								Object::Integer(f) => Ok("".to_string()),
+								Object::Real(_f) => Ok("".to_string()),
+								Object::Integer(_f) => Ok("".to_string()),
 								_ => Err(PdfParseError::OperandType),
 							}
 						})
@@ -155,6 +164,13 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				None => Ok(Self::ShowTextAllowingIndividualGlyphPositioning {
 					body: "".to_string(),
 				}),
+				_ => Err(PdfParseError::OperandType),
+			},
+			"Tj" => match operation.operands.get(0) {
+				Some(Object::String(bytes, _format)) => {
+					let body = String::from_utf8(bytes.to_vec()).map_err(Into::into);
+					body.map(|body: String| Self::ShowText { body })
+				}
 				_ => Err(PdfParseError::OperandType),
 			},
 

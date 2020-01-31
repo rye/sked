@@ -64,20 +64,26 @@ impl<Tz: TimeZone> Exception<Tz> {
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Part<Tz: TimeZone> {
 	open: Option<TimeSpecifier<Tz>>,
 	close: Option<TimeSpecifier<Tz>>,
 	notes: Vec<String>,
 }
 
-impl<Tz: TimeZone> Part<Tz> {
-	pub fn new() -> Self {
+impl<Tz: TimeZone> Default for Part<Tz> {
+	fn default() -> Self {
 		Self {
 			open: None,
 			close: None,
 			notes: Vec::new(),
 		}
+	}
+}
+
+impl<Tz: TimeZone> Part<Tz> {
+	pub fn new() -> Self {
+		Self::default()
 	}
 
 	pub fn open(mut self, ts: TimeSpecifier<Tz>) -> Self {

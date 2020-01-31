@@ -1,5 +1,5 @@
 use chrono::{DateTime, FixedOffset};
-use sked::{Exception, Part, Schedule, Space, Status, TimeSpecifier};
+use sked::{Exception, Part, Schedule, Space, Status, Specifier};
 
 #[cfg(test)]
 mod tests {
@@ -22,22 +22,22 @@ mod tests {
 			.expires(DateTime::parse_from_rfc3339("2020-02-01T00:00:00-06:00").unwrap())
 			.part(
 				Part::new()
-					.open(TimeSpecifier::Weekly {
+					.open(Specifier::Weekly {
 						day: "Thursday".to_string(),
 						time: "07:00".to_string(),
 					})
-					.close(TimeSpecifier::Weekly {
+					.close(Specifier::Weekly {
 						day: "Thursday".to_string(),
 						time: "17:00".to_string(),
 					}),
 			)
 			.exception(
 				Exception::new()
-					.effective(TimeSpecifier::Weekly {
+					.effective(Specifier::Weekly {
 						day: "Thursday".to_string(),
 						time: "10:15".to_string(),
 					})
-					.expires(TimeSpecifier::Weekly {
+					.expires(Specifier::Weekly {
 						day: "Thursday".to_string(),
 						time: "11:00".to_string(),
 					})

@@ -1,12 +1,12 @@
-use super::{Status, TimeSpecifier};
+use super::{Status, Specifier};
 use chrono::TimeZone;
 
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Exception<Tz: TimeZone> {
 	effect: Status,
-	effective: Option<TimeSpecifier<Tz>>,
-	expires: Option<TimeSpecifier<Tz>>,
+	effective: Option<Specifier<Tz>>,
+	expires: Option<Specifier<Tz>>,
 }
 
 impl<Tz: TimeZone> Default for Exception<Tz> {
@@ -29,12 +29,12 @@ impl<Tz: TimeZone> Exception<Tz> {
 		self
 	}
 
-	pub fn effective(mut self, effective: TimeSpecifier<Tz>) -> Self {
+	pub fn effective(mut self, effective: Specifier<Tz>) -> Self {
 		self.effective = Some(effective);
 		self
 	}
 
-	pub fn expires(mut self, expires: TimeSpecifier<Tz>) -> Self {
+	pub fn expires(mut self, expires: Specifier<Tz>) -> Self {
 		self.expires = Some(expires);
 		self
 	}

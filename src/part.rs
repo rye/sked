@@ -1,11 +1,11 @@
-use super::TimeSpecifier;
+use super::Specifier;
 use chrono::TimeZone;
 
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Part<Tz: TimeZone> {
-	open: Option<TimeSpecifier<Tz>>,
-	close: Option<TimeSpecifier<Tz>>,
+	open: Option<Specifier<Tz>>,
+	close: Option<Specifier<Tz>>,
 	notes: Vec<String>,
 }
 
@@ -24,12 +24,12 @@ impl<Tz: TimeZone> Part<Tz> {
 		Self::default()
 	}
 
-	pub fn open(mut self, ts: TimeSpecifier<Tz>) -> Self {
+	pub fn open(mut self, ts: Specifier<Tz>) -> Self {
 		self.open = Some(ts);
 		self
 	}
 
-	pub fn close(mut self, ts: TimeSpecifier<Tz>) -> Self {
+	pub fn close(mut self, ts: Specifier<Tz>) -> Self {
 		self.close = Some(ts);
 		self
 	}

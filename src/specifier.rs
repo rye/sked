@@ -14,6 +14,3 @@ pub enum Specifier<Tz: TimeZone> {
 	/// An exact time
 	Exact(DateTime<Tz>),
 }
-
-#[deprecated]
-pub type TimeSpecifier<Tz> = Specifier<Tz>;

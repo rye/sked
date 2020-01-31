@@ -1,5 +1,5 @@
 use chrono::{DateTime, FixedOffset};
-use sked::{Exception, Part, Schedule, Space, Status, Specifier};
+use sked::{Exception, Part, Reason, Schedule, Space, Specifier, Status, StatusChange};
 
 #[cfg(test)]
 mod tests {
@@ -41,9 +41,9 @@ mod tests {
 						day: "Thursday".to_string(),
 						time: "11:00".to_string(),
 					})
-					.effect(Status::Closed {
-						reason: Some("Closed for lunch.".to_string()),
-					}),
+					.effect(Status::Closed(Reason::Exception(Some(
+						"Closed for lunch.".to_string(),
+					)))),
 			);
 
 		Space::new(name).schedule(schedule)
@@ -55,26 +55,38 @@ mod tests {
 		check_space_at_time!(
 			is_closed_with_correct_reason,
 			"2020-01-16T06:00:00-06:00",
-			Status::Closed { reason: None }
+			Status::Closed(Reason::Part(None))
 		);
 	}
 
 	mod at_effective {
 		use super::*;
 
-		check_space_at_time!(is_open, "2020-01-16T07:00:00-06:00", Status::Open);
+		check_space_at_time!(
+			is_open,
+			"2020-01-16T07:00:00-06:00",
+			Status::Open(Reason::Part(None))
+		);
 	}
 
 	mod while_effective {
 		use super::*;
 
-		check_space_at_time!(is_open, "2020-01-16T10:00:00-06:00", Status::Open);
+		check_space_at_time!(
+			is_open,
+			"2020-01-16T10:00:00-06:00",
+			Status::Open(Reason::Part(None))
+		);
 	}
 
 	mod before_exception_effective {
 		use super::*;
 
-		check_space_at_time!(is_open, "2020-01-16T10:14:59-06:00", Status::Open);
+		check_space_at_time!(
+			is_open,
+			"2020-01-16T10:14:59-06:00",
+			Status::Open(Reason::Part(None))
+		);
 	}
 
 	mod at_exception_effective {
@@ -83,9 +95,7 @@ mod tests {
 		check_space_at_time!(
 			is_closed_with_correct_reason,
 			"2020-01-16T10:15:00-06:00",
-			Status::Closed {
-				reason: Some("Closed for lunch.".to_string())
-			}
+			Status::Closed(Reason::Exception(Some("Closed for lunch.".to_string())))
 		);
 	}
 
@@ -95,9 +105,7 @@ mod tests {
 		check_space_at_time!(
 			is_closed_with_correct_reason,
 			"2020-01-16T10:35:00-06:00",
-			Status::Closed {
-				reason: Some("Closed for lunch.".to_string())
-			}
+			Status::Closed(Reason::Exception(Some("Closed for lunch.".to_string())))
 		);
 	}
 
@@ -107,22 +115,28 @@ mod tests {
 		check_space_at_time!(
 			is_closed_with_correct_reason,
 			"2020-01-16T10:59:59-06:00",
-			Status::Closed {
-				reason: Some("Closed for lunch.".to_string())
-			}
+			Status::Closed(Reason::Exception(Some("Closed for lunch.".to_string())))
 		);
 	}
 
 	mod after_exception_expires {
 		use super::*;
 
-		check_space_at_time!(is_open, "2020-01-16T11:00:00-06:00", Status::Open);
+		check_space_at_time!(
+			is_open,
+			"2020-01-16T11:00:00-06:00",
+			Status::Open(Reason::Part(None))
+		);
 	}
 
 	mod before_expires {
 		use super::*;
 
-		check_space_at_time!(is_open, "2020-01-16T16:59:59-06:00", Status::Open);
+		check_space_at_time!(
+			is_open,
+			"2020-01-16T16:59:59-06:00",
+			Status::Open(Reason::Part(None))
+		);
 	}
 
 	mod at_expires {
@@ -131,7 +145,7 @@ mod tests {
 		check_space_at_time!(
 			is_closed_no_reason,
 			"2020-01-16T17:00:00-06:00",
-			Status::Closed { reason: None }
+			Status::Closed(Reason::Part(None))
 		);
 	}
 
@@ -141,7 +155,7 @@ mod tests {
 		check_space_at_time!(
 			is_closed_no_reason,
 			"2020-01-16T18:00:00-06:00",
-			Status::Closed { reason: None }
+			Status::Closed(Reason::Part(None))
 		);
 	}
 }

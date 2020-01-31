@@ -1,10 +1,10 @@
-use super::{Status, Specifier};
+use super::{Specifier, Status};
 use chrono::TimeZone;
 
 #[allow(dead_code)]
 #[derive(Debug)]
 pub struct Exception<Tz: TimeZone> {
-	effect: Status,
+	effect: Option<Status>,
 	effective: Option<Specifier<Tz>>,
 	expires: Option<Specifier<Tz>>,
 }
@@ -12,7 +12,7 @@ pub struct Exception<Tz: TimeZone> {
 impl<Tz: TimeZone> Default for Exception<Tz> {
 	fn default() -> Self {
 		Self {
-			effect: Status::Closed { reason: None },
+			effect: None,
 			effective: None,
 			expires: None,
 		}
@@ -25,7 +25,7 @@ impl<Tz: TimeZone> Exception<Tz> {
 	}
 
 	pub fn effect(mut self, effect: Status) -> Self {
-		self.effect = effect;
+		self.effect = Some(effect);
 		self
 	}
 

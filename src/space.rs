@@ -1,6 +1,5 @@
+use super::{Reason, Schedule, Status, StatusChange};
 use chrono::{DateTime, TimeZone};
-
-use super::{Schedule, Status};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -46,7 +45,7 @@ where
 	/// Compute the status of the space at the given time
 	// TODO Make actually functional
 	pub fn status_at(&self, _time: &DateTime<Tz>) -> Status {
-		Status::Closed { reason: None }
+		Status::Closed(Reason::Part(None))
 	}
 
 	pub fn next_status_change(&self) -> Option<StatusChange<Tz>> {

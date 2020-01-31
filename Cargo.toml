@@ -1,0 +1,11 @@
+[package]
+name = "build_hours"
+version = "0.1.0"
+authors = ["Kristofer Rye <kristofer.rye@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+lopdf = "0.23.0"
+pdf-extract = "0.6.1"

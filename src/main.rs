@@ -30,8 +30,12 @@ enum Operation {
 	BeginTextObject,
 	EndTextObject,
 
-	SetColorSpaceForStrokingOperations,
-	SetColorSpaceForNonstrokingOperations,
+	SetColorSpaceForStrokingOperations {
+		name: Vec<u8>,
+	},
+	SetColorSpaceForNonstrokingOperations {
+		name: Vec<u8>,
+	},
 	SetColorForNonstrokingOperations,
 
 	SetTextFontAndSize {
@@ -104,9 +108,22 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			("BT", _) => Ok(Self::BeginTextObject),
 			("ET", _) => Ok(Self::EndTextObject),
 
-			("CS", _) => Ok(Self::SetColorSpaceForStrokingOperations),
-			("cs", _) => Ok(Self::SetColorSpaceForNonstrokingOperations),
-			("scn", _) => Ok(Self::SetColorForNonstrokingOperations),
+			("CS", opds) => match opds.get(0) {
+				Some(Object::Name(name)) => Ok(Self::SetColorSpaceForStrokingOperations {
+					name: name.to_vec(),
+				}),
+				_ => unimplemented!(),
+			},
+			("cs", opds) => match opds.get(0) {
+				Some(Object::Name(name)) => Ok(Self::SetColorSpaceForNonstrokingOperations {
+					name: name.to_vec(),
+				}),
+				_ => unimplemented!(),
+			},
+			("scn", opds) => {
+				println!("{:?}", opds);
+				Ok(Self::SetColorForNonstrokingOperations)
+			}
 
 			("Tf", opds) => match (opds.get(0), opds.get(1).map(to_f64).flatten()) {
 				(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
@@ -249,6 +266,7 @@ fn main() {
 						match op {
 							MoveTextPosition { .. }
 							| MoveTextPositionAndSetLeading { .. }
+							| ShowText { .. }
 							| ShowTextAllowingIndividualGlyphPositioning { .. }
 							| AppendRectangleToPath { .. }
 							| FillPathUsingNonzeroWindingNumberRule
@@ -264,6 +282,8 @@ fn main() {
 							| BeginTextObject
 							| SaveGraphicsState
 							| RestoreGraphicsState
+							| SetColorSpaceForNonstrokingOperations { .. }
+							| SetColorSpaceForStrokingOperations { .. }
 							| EndTextObject => {}
 							_ => println!("{:?}", op),
 						}

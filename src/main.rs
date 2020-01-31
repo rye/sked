@@ -34,9 +34,16 @@ enum Operation {
 	SetColorSpaceForNonstrokingOperations,
 	SetColorForNonstrokingOperations,
 
-	SetTextFontAndSize { name: Vec<u8>, size: f64 },
-	SetCharacterSpacing { spacing: f64 },
-	SetWordSpacing { spacing: f64 },
+	SetTextFontAndSize {
+		name: Vec<u8>,
+		size: f64,
+	},
+	SetCharacterSpacing {
+		spacing: f64,
+	},
+	SetWordSpacing {
+		spacing: f64,
+	},
 	SetTextMatrixAndTextLineMatrix {
 		a: f64,
 		b: f64,

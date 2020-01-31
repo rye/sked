@@ -5,6 +5,17 @@ use sked::{Exception, Part, Schedule, Space, Status, TimeSpecifier};
 mod tests {
 	use super::*;
 
+	macro_rules! check_space_at_time {
+		($test_name:ident, $time:literal, $expected:expr) => {
+			#[test]
+			fn $test_name() {
+				let space: Space<FixedOffset> = generate_space("asdf");
+				let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339($time).unwrap();
+				assert_eq!(space.status_at(&time), $expected);
+			}
+		}
+	}
+
 	fn generate_space(name: &str) -> Space<FixedOffset> {
 		let schedule: Schedule<FixedOffset> = Schedule::new()
 			.effective(DateTime::parse_from_rfc3339("2020-01-01T00:00:00-06:00").unwrap())
@@ -39,122 +50,66 @@ mod tests {
 	mod before_effective {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_closed_with_correct_reason() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T06:00:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Closed { reason: None });
-		}
+		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T06:00:00-06:00", Status::Closed { reason: None });
 	}
 
 	mod at_effective {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_open() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T07:00:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Open);
-		}
+		check_space_at_time!(is_open, "2020-01-16T07:00:00-06:00", Status::Open);
 	}
 
 	mod while_effective {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_open() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T10:00:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Open);
-		}
+		check_space_at_time!(is_open, "2020-01-16T10:00:00-06:00", Status::Open);
 	}
 
 	mod before_exception_effective {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_open() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T10:14:59-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Open);
-		}
+		check_space_at_time!(is_open, "2020-01-16T10:14:59-06:00", Status::Open);
 	}
 
 	mod at_exception_effective {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_closed_with_correct_reason() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T10:15:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Closed { reason: Some("Closed for lunch.".to_string()) });
-		}
+		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T10:15:00-06:00", Status::Closed { reason: Some("Closed for lunch.".to_string()) });
 	}
 
 	mod while_exception_effective {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_closed_with_correct_reason() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T10:35:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Closed { reason: Some("Closed for lunch.".to_string()) });
-		}
+		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T10:35:00-06:00", Status::Closed { reason: Some("Closed for lunch.".to_string()) });
 	}
 
 	mod before_exception_expires {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_closed_with_correct_reason() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T10:59:59-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Closed { reason: Some("Closed for lunch.".to_string()) });
-		}
+		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T10:59:59-06:00", Status::Closed { reason: Some("Closed for lunch.".to_string()) });
 	}
 
 	mod after_exception_expires {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_open() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T11:00:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Open);
-		}
+		check_space_at_time!(is_open, "2020-01-16T11:00:00-06:00", Status::Open);
 	}
 
 	mod before_expires {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_open() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T16:59:59-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Open);
-		}
+		check_space_at_time!(is_open, "2020-01-16T16:59:59-06:00", Status::Open);
 	}
 
 	mod at_expires {
 		use super::*;
 
-
-		#[test]
-		fn space_is_marked_as_closed() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T17:00:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Closed { reason: None });
-		}
+		check_space_at_time!(is_closed_no_reason, "2020-01-16T17:00:00-06:00", Status::Closed { reason: None });
 	}
 
 	mod after_expires {
 		use super::*;
 
-		#[test]
-		fn space_is_marked_as_closed() {
-			let space: Space<FixedOffset> = generate_space("asdf");
-			let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339("2020-01-16T18:00:00-06:00").unwrap();
-			assert_eq!(space.status_at(&time), Status::Closed { reason: None });
-		}
+		check_space_at_time!(is_closed_no_reason, "2020-01-16T18:00:00-06:00", Status::Closed { reason: None });
 	}
 }

@@ -17,13 +17,6 @@ pub enum TimeSpecifier<Tz: TimeZone> {
 	Exact(Moment<Tz>),
 }
 
-#[allow(dead_code)]
-#[derive(Debug, PartialEq)]
-pub enum Status {
-	Open,
-	Closed { reason: Option<String> },
-}
-
 mod exception;
 pub use exception::*;
 
@@ -32,6 +25,9 @@ pub use part::*;
 
 mod schedule;
 pub use schedule::*;
+
+mod status;
+pub use status::*;
 
 mod space;
 pub use space::*;

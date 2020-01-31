@@ -37,7 +37,6 @@ where
 	}
 
 	/// Compute the status of the space at the current time
-	// TODO Make actually functional
 	pub fn status(&self) -> Status {
 		use chrono::offset::Local;
 		let now: DateTime<Local> = Local::now();
@@ -48,5 +47,16 @@ where
 	// TODO Make actually functional
 	pub fn status_at(&self, _time: &DateTime<Tz>) -> Status {
 		Status::Closed { reason: None }
+	}
+
+	pub fn next_status_change(&self) -> Option<StatusChange<Tz>> {
+		use chrono::offset::Local;
+		let now: DateTime<Local> = Local::now();
+		self.next_status_change_at(&DateTime::from(now))
+	}
+
+	// TODO Make actually functional
+	pub fn next_status_change_at(&self, _time: &DateTime<Tz>) -> Option<StatusChange<Tz>> {
+		None
 	}
 }

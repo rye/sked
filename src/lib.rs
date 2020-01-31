@@ -64,7 +64,7 @@ impl<Tz: TimeZone> Exception<Tz> {
 }
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Part<Tz: TimeZone> {
 	open: Option<TimeSpecifier<Tz>>,
 	close: Option<TimeSpecifier<Tz>>,

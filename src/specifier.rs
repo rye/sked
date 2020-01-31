@@ -3,7 +3,7 @@ use chrono::{DateTime, TimeZone};
 /// A specifier for when something happens.
 #[allow(dead_code)]
 #[derive(Debug)]
-pub enum TimeSpecifier<Tz: TimeZone> {
+pub enum Specifier<Tz: TimeZone> {
 	/// A pattern of days and times which must be computed against to give a
 	/// definitive answer.
 	Weekly { day: String, time: String },
@@ -14,3 +14,6 @@ pub enum TimeSpecifier<Tz: TimeZone> {
 	/// An exact time
 	Exact(DateTime<Tz>),
 }
+
+#[deprecated]
+pub type TimeSpecifier<Tz> = Specifier<Tz>;

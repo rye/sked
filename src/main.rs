@@ -231,23 +231,23 @@ fn main() {
 
 						match op {
 							MoveTextPosition { .. }
-							| MoveTextPositionAndSetLeading {..}
+							| MoveTextPositionAndSetLeading { .. }
 							| ShowTextAllowingIndividualGlyphPositioning { .. }
 							| AppendRectangleToPath { .. }
 							| FillPathUsingNonzeroWindingNumberRule
-								| SetTextMatrixAndTextLineMatrix { .. }
+							| SetTextMatrixAndTextLineMatrix { .. }
 							| SetCharacterSpacing { .. }
 							| SetWordSpacing { .. }
 							| EndPathWithoutFillingOrStroking
-								| BeginMarkedContentSequenceWithPropertyList
-								| SetClippingPathUsingNonzeroWindingNumberRule
-								| SetTextFontAndSize {..}
+							| BeginMarkedContentSequenceWithPropertyList
+							| SetClippingPathUsingNonzeroWindingNumberRule
+							| SetTextFontAndSize { .. }
 							| MoveToStartOfNextLine
-								| EndMarkedContentSequence
-								| BeginTextObject
-								| SaveGraphicsState
-								| RestoreGraphicsState
-								| EndTextObject => {}
+							| EndMarkedContentSequence
+							| BeginTextObject
+							| SaveGraphicsState
+							| RestoreGraphicsState
+							| EndTextObject => {}
 							_ => println!("{:?}", op),
 						}
 					}

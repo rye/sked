@@ -3,7 +3,6 @@ use lopdf::*;
 
 use std::env;
 use std::path;
-//use std::path::PathBuf;
 
 #[derive(Debug)]
 pub enum PdfParseError {

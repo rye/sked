@@ -37,32 +37,7 @@ fn main() {
 
 						let op: crate::Operation = operation.try_into().expect("couldn't convert operation");
 
-						use crate::Operation::*;
-
-						match op {
-							MoveTextPosition { .. }
-							| MoveTextPositionAndSetLeading { .. }
-							| ShowText { .. }
-							| ShowTextAllowingIndividualGlyphPositioning { .. }
-							| AppendRectangleToPath { .. }
-							| FillPathUsingNonzeroWindingNumberRule
-							| SetTextMatrixAndTextLineMatrix { .. }
-							| SetCharacterSpacing { .. }
-							| SetWordSpacing { .. }
-							| EndPathWithoutFillingOrStroking
-							| BeginMarkedContentSequenceWithPropertyList
-							| SetClippingPathUsingNonzeroWindingNumberRule
-							| SetTextFontAndSize { .. }
-							| MoveToStartOfNextLine
-							| EndMarkedContentSequence
-							| BeginTextObject
-							| SaveGraphicsState
-							| RestoreGraphicsState
-							| SetColorSpaceForNonstrokingOperations { .. }
-							| SetColorSpaceForStrokingOperations { .. }
-							| EndTextObject => {}
-							_ => println!("{:?}", op),
-						}
+						println!("{:?}", op);
 					}
 				}
 				_ => todo!(),

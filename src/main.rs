@@ -98,52 +98,46 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			}
 		}
 
-		let operator: &str = operation.operator.as_str();
-		match operator {
-			"BDC" => Ok(Self::BeginMarkedContentSequenceWithPropertyList),
-			"EMC" => Ok(Self::EndMarkedContentSequence),
+		match (operation.operator.as_str(), operation.operands) {
+			("BDC", _) => Ok(Self::BeginMarkedContentSequenceWithPropertyList),
+			("EMC", _) => Ok(Self::EndMarkedContentSequence),
 
-			"BT" => Ok(Self::BeginTextObject),
-			"ET" => Ok(Self::EndTextObject),
+			("BT", _) => Ok(Self::BeginTextObject),
+			("ET", _) => Ok(Self::EndTextObject),
 
-			"CS" => Ok(Self::SetColorSpaceForStrokingOperations),
-			"cs" => Ok(Self::SetColorSpaceForNonstrokingOperations),
-			"scn" => Ok(Self::SetColorForNonstrokingOperations),
+			("CS", _) => Ok(Self::SetColorSpaceForStrokingOperations),
+			("cs", _) => Ok(Self::SetColorSpaceForNonstrokingOperations),
+			("scn", _) => Ok(Self::SetColorForNonstrokingOperations),
 
-			"Tf" => {
-				match (
-					operation.operands.get(0),
-					operation.operands.get(1).map(to_f64).flatten(),
-				) {
-					(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
-						name: name.to_vec(),
-						size,
-					}),
-					_ => unimplemented!(),
-				}
-			}
-			"Tc" => match operation.operands.get(0).map(to_f64).flatten() {
+			("Tf", opds) => match (opds.get(0), opds.get(1).map(to_f64).flatten()) {
+				(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
+					name: name.to_vec(),
+					size,
+				}),
+				_ => unimplemented!(),
+			},
+			("Tc", opds) => match opds.get(0).map(to_f64).flatten() {
 				Some(spacing) => Ok(Self::SetCharacterSpacing { spacing }),
 				_ => Err(PdfParseError::OperandType),
 			},
-			"Tw" => match operation.operands.get(0).map(to_f64).flatten() {
+			("Tw", opds) => match opds.get(0).map(to_f64).flatten() {
 				Some(spacing) => Ok(Self::SetWordSpacing { spacing }),
 				_ => Err(PdfParseError::OperandType),
 			},
-			"Tm" => match (
-				operation.operands.get(0).map(to_f64).flatten(),
-				operation.operands.get(1).map(to_f64).flatten(),
-				operation.operands.get(2).map(to_f64).flatten(),
-				operation.operands.get(3).map(to_f64).flatten(),
-				operation.operands.get(4).map(to_f64).flatten(),
-				operation.operands.get(5).map(to_f64).flatten(),
+			("Tm", opds) => match (
+				opds.get(0).map(to_f64).flatten(),
+				opds.get(1).map(to_f64).flatten(),
+				opds.get(2).map(to_f64).flatten(),
+				opds.get(3).map(to_f64).flatten(),
+				opds.get(4).map(to_f64).flatten(),
+				opds.get(5).map(to_f64).flatten(),
 			) {
 				(Some(a), Some(b), Some(c), Some(d), Some(e), Some(f)) => {
 					Ok(Self::SetTextMatrixAndTextLineMatrix { a, b, c, d, e, f })
 				}
 				_ => Err(PdfParseError::OperandType),
 			},
-			"TJ" => match operation.operands.get(0) {
+			("TJ", opds) => match opds.get(0) {
 				Some(Object::Array(array)) => {
 					let body: PdfParseResult<String> = array
 						.iter()
@@ -167,7 +161,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				}),
 				_ => Err(PdfParseError::OperandType),
 			},
-			"Tj" => match operation.operands.get(0) {
+			("Tj", opds) => match opds.get(0) {
 				Some(Object::String(bytes, _format)) => {
 					let body = String::from_utf8(bytes.to_vec()).map_err(Into::into);
 					body.map(|body: String| Self::ShowText { body })
@@ -175,30 +169,30 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				_ => Err(PdfParseError::OperandType),
 			},
 
-			"q" => Ok(Self::SaveGraphicsState),
-			"Q" => Ok(Self::RestoreGraphicsState),
+			("q", _) => Ok(Self::SaveGraphicsState),
+			("Q", _) => Ok(Self::RestoreGraphicsState),
 
-			"Td" => match (
-				operation.operands.get(0).map(to_f64).flatten(),
-				operation.operands.get(1).map(to_f64).flatten(),
+			("Td", opds) => match (
+				opds.get(0).map(to_f64).flatten(),
+				opds.get(1).map(to_f64).flatten(),
 			) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPosition { t_x, t_y }),
 				_ => todo!(),
 			},
-			"TD" => match (
-				operation.operands.get(0).map(to_f64).flatten(),
-				operation.operands.get(1).map(to_f64).flatten(),
+			("TD", opds) => match (
+				opds.get(0).map(to_f64).flatten(),
+				opds.get(1).map(to_f64).flatten(),
 			) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPositionAndSetLeading { t_x, t_y }),
 				_ => todo!(),
 			},
-			"T*" => Ok(Self::MoveToStartOfNextLine),
+			("T*", _) => Ok(Self::MoveToStartOfNextLine),
 
-			"re" => match (
-				operation.operands.get(0).map(to_f64).flatten(),
-				operation.operands.get(1).map(to_f64).flatten(),
-				operation.operands.get(2).map(to_f64).flatten(),
-				operation.operands.get(3).map(to_f64).flatten(),
+			("re", opds) => match (
+				opds.get(0).map(to_f64).flatten(),
+				opds.get(1).map(to_f64).flatten(),
+				opds.get(2).map(to_f64).flatten(),
+				opds.get(3).map(to_f64).flatten(),
 			) {
 				(Some(x), Some(y), Some(width), Some(height)) => Ok(Self::AppendRectangleToPath {
 					x,
@@ -209,13 +203,13 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				_ => Err(PdfParseError::OperandType),
 			},
 
-			"f" => Ok(Self::FillPathUsingNonzeroWindingNumberRule),
-			"F" => Ok(Self::FillPathUsingNonzeroWindingNumberRuleObsolete),
-			"f*" => Ok(Self::FillPathUsingEvenOddRule),
-			"W" => Ok(Self::SetClippingPathUsingNonzeroWindingNumberRule),
-			"n" => Ok(Self::EndPathWithoutFillingOrStroking),
+			("f", _) => Ok(Self::FillPathUsingNonzeroWindingNumberRule),
+			("F", _) => Ok(Self::FillPathUsingNonzeroWindingNumberRuleObsolete),
+			("f*", _) => Ok(Self::FillPathUsingEvenOddRule),
+			("W", _) => Ok(Self::SetClippingPathUsingNonzeroWindingNumberRule),
+			("n", _) => Ok(Self::EndPathWithoutFillingOrStroking),
 
-			op => Err(PdfParseError::UnknownOperator(op.to_string())),
+			(op, _) => Err(PdfParseError::UnknownOperator(op.to_string())),
 		}
 	}
 }

@@ -26,11 +26,41 @@ pub enum Status {
 
 #[allow(dead_code)]
 #[derive(Debug)]
-pub struct Override<Tz: TimeZone> {
+pub struct Exception<Tz: TimeZone> {
 	effect: Status,
-	beginning: TimeSpecifier<Tz>,
-	end: TimeSpecifier<Tz>,
-	message: String,
+	effective: Option<TimeSpecifier<Tz>>,
+	expires: Option<TimeSpecifier<Tz>>,
+}
+
+impl<Tz: TimeZone> Default for Exception<Tz> {
+	fn default() -> Self {
+		Self {
+			effect: Status::Closed { reason: None },
+			effective: None,
+			expires: None,
+		}
+	}
+}
+
+impl<Tz: TimeZone> Exception<Tz> {
+	pub fn new() -> Self {
+		Self::default()
+	}
+
+	pub fn effect(mut self, effect: Status) -> Self {
+		self.effect = effect;
+		self
+	}
+
+	pub fn effective(mut self, effective: TimeSpecifier<Tz>) -> Self {
+		self.effective = Some(effective);
+		self
+	}
+
+	pub fn expires(mut self, expires: TimeSpecifier<Tz>) -> Self {
+		self.expires = Some(expires);
+		self
+	}
 }
 
 #[allow(dead_code)]
@@ -72,7 +102,7 @@ pub struct Schedule<Tz: TimeZone> {
 	effective: Option<DateTime<Tz>>,
 	expires: Option<DateTime<Tz>>,
 	parts: Vec<Part<Tz>>,
-	overrides: Vec<Override<Tz>>,
+	exceptions: Vec<Exception<Tz>>,
 }
 
 impl<Tz: TimeZone> Default for Schedule<Tz> {
@@ -81,7 +111,7 @@ impl<Tz: TimeZone> Default for Schedule<Tz> {
 			effective: None,
 			expires: None,
 			parts: Vec::new(),
-			overrides: Vec::new(),
+			exceptions: Vec::new(),
 		}
 	}
 }
@@ -103,6 +133,11 @@ impl<Tz: TimeZone> Schedule<Tz> {
 
 	pub fn part(mut self, part: Part<Tz>) -> Self {
 		self.parts.push(part);
+		self
+	}
+
+	pub fn exception(mut self, exception: Exception<Tz>) -> Self {
+		self.exceptions.push(exception);
 		self
 	}
 }

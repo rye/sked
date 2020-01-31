@@ -7,7 +7,7 @@ use std::path;
 
 #[derive(Debug)]
 pub enum PdfParseError {
-	UnknownOperator,
+	UnknownOperator(String),
 	MissingOperands,
 	OperandType,
 	Lopdf,
@@ -191,7 +191,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			"W" => Ok(Self::SetClippingPathUsingNonzeroWindingNumberRule),
 			"n" => Ok(Self::EndPathWithoutFillingOrStroking),
 
-			op => Err(PdfParseError::UnknownOperator),
+			op => Err(PdfParseError::UnknownOperator(op.to_string())),
 		}
 	}
 }

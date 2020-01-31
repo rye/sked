@@ -13,7 +13,7 @@ mod tests {
 				let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339($time).unwrap();
 				assert_eq!(space.status_at(&time), $expected);
 			}
-		}
+		};
 	}
 
 	fn generate_space(name: &str) -> Space<FixedOffset> {
@@ -41,7 +41,9 @@ mod tests {
 						day: "Thursday".to_string(),
 						time: "11:00".to_string(),
 					})
-					.effect(Status::Closed { reason: Some("Closed for lunch.".to_string()) })
+					.effect(Status::Closed {
+						reason: Some("Closed for lunch.".to_string()),
+					}),
 			);
 
 		Space::new(name).schedule(schedule)
@@ -50,7 +52,11 @@ mod tests {
 	mod before_effective {
 		use super::*;
 
-		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T06:00:00-06:00", Status::Closed { reason: None });
+		check_space_at_time!(
+			is_closed_with_correct_reason,
+			"2020-01-16T06:00:00-06:00",
+			Status::Closed { reason: None }
+		);
 	}
 
 	mod at_effective {
@@ -74,19 +80,37 @@ mod tests {
 	mod at_exception_effective {
 		use super::*;
 
-		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T10:15:00-06:00", Status::Closed { reason: Some("Closed for lunch.".to_string()) });
+		check_space_at_time!(
+			is_closed_with_correct_reason,
+			"2020-01-16T10:15:00-06:00",
+			Status::Closed {
+				reason: Some("Closed for lunch.".to_string())
+			}
+		);
 	}
 
 	mod while_exception_effective {
 		use super::*;
 
-		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T10:35:00-06:00", Status::Closed { reason: Some("Closed for lunch.".to_string()) });
+		check_space_at_time!(
+			is_closed_with_correct_reason,
+			"2020-01-16T10:35:00-06:00",
+			Status::Closed {
+				reason: Some("Closed for lunch.".to_string())
+			}
+		);
 	}
 
 	mod before_exception_expires {
 		use super::*;
 
-		check_space_at_time!(is_closed_with_correct_reason, "2020-01-16T10:59:59-06:00", Status::Closed { reason: Some("Closed for lunch.".to_string()) });
+		check_space_at_time!(
+			is_closed_with_correct_reason,
+			"2020-01-16T10:59:59-06:00",
+			Status::Closed {
+				reason: Some("Closed for lunch.".to_string())
+			}
+		);
 	}
 
 	mod after_exception_expires {
@@ -104,12 +128,20 @@ mod tests {
 	mod at_expires {
 		use super::*;
 
-		check_space_at_time!(is_closed_no_reason, "2020-01-16T17:00:00-06:00", Status::Closed { reason: None });
+		check_space_at_time!(
+			is_closed_no_reason,
+			"2020-01-16T17:00:00-06:00",
+			Status::Closed { reason: None }
+		);
 	}
 
 	mod after_expires {
 		use super::*;
 
-		check_space_at_time!(is_closed_no_reason, "2020-01-16T18:00:00-06:00", Status::Closed { reason: None });
+		check_space_at_time!(
+			is_closed_no_reason,
+			"2020-01-16T18:00:00-06:00",
+			Status::Closed { reason: None }
+		);
 	}
 }

@@ -231,3 +231,19 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 		}
 	}
 }
+
+#[derive(Debug, Default)]
+pub struct Pdf {
+	version: Option<String>,
+}
+
+impl Pdf {
+	pub fn new() -> Self {
+		Self::default()
+	}
+
+	pub fn version(mut self, version: &str) -> Self {
+		self.version = Some(version.to_string());
+		self
+	}
+}

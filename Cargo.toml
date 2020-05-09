@@ -5,6 +5,12 @@ version = "0.1.0"
 authors = ["Kristofer Rye <kristofer.rye@gmail.com>"]
 edition = "2018"
 
+[features]
+default = ["simple_logger"]
+
 [dependencies]
 chrono = "0.4.10"
+log = "0.4.8"
 lopdf = "0.23.0"
+simple_logger = { version = "1.5.0", optional = true }
+

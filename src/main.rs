@@ -26,9 +26,18 @@ fn main() {
 
 	let pdf: Pdf = Pdf::new().version(&doc.version);
 
-	let walked: BTreeSet<ObjectId> = doc.traverse_objects(|object: &mut Object| {
-		info!("Traversing {:?}", object);
-	}).iter().cloned().collect();
+	let walked: BTreeSet<ObjectId> = doc
+		.traverse_objects(|object: &mut Object| {
+			info!("Traversing {:?}", object);
+		})
+		.iter()
+		.cloned()
+		.collect();
 
-	println!("Leftovers: {:?}", unvisited_object_ids.difference(&walked).collect::<Vec<&ObjectId>>());
+	println!(
+		"Leftovers: {:?}",
+		unvisited_object_ids
+			.difference(&walked)
+			.collect::<Vec<&ObjectId>>()
+	);
 }

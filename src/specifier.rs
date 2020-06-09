@@ -81,3 +81,14 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 		}
 	}
 }
+
+impl<Tz: TimeZone> Specifier<Tz> {
+	fn instances(&self, basis: DateTime<Tz>) -> Instances<Tz> {
+		let specifier = self;
+		Instances { specifier, basis }
+	}
+
+	fn next(&self, n: usize, basis: DateTime<Tz>) -> Vec<DateTime<Tz>> {
+		self.instances(basis).take(n).collect()
+	}
+}

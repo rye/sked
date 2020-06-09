@@ -34,7 +34,17 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 			Specifier::Exact(dt) if dt == &self.basis => None,
 			Specifier::Exact(_) => panic!(),
 			Specifier::Weekly { .. } => todo!(),
-			Specifier::Daily { .. } => todo!(),
+			Specifier::Daily { time } => {
+				let specifier_time: chrono::NaiveTime = NaiveTime::parse_from_str(time, "%H:%M")
+					.or(NaiveTime::parse_from_str(time, "%H:%M:%S"))
+					.expect("invalid time specifier");
+
+				let instance = self.basis.date().and_time(specifier_time).unwrap();
+
+				self.basis = self.basis.to_owned() + chrono::Duration::days(1);
+
+				Some(instance)
+			}
 		}
 	}
 }

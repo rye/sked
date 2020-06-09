@@ -20,3 +20,11 @@ pub struct Instances<'iteration, Tz: TimeZone> {
 	specifier: &'iteration Specifier<Tz>,
 	basis: DateTime<Tz>,
 }
+
+impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
+	type Item = chrono::DateTime<Tz>;
+
+	fn next(&mut self) -> Option<Self::Item> {
+		None
+	}
+}

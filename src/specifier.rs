@@ -26,7 +26,13 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 
 	fn next(&mut self) -> Option<Self::Item> {
 		match self.specifier {
-			Specifier::Exact(_) => todo!(),
+			Specifier::Exact(dt) if dt != &self.basis => {
+				let next = dt.to_owned();
+				self.basis = dt.to_owned();
+				Some(next)
+			}
+			Specifier::Exact(dt) if dt == &self.basis => None,
+			Specifier::Exact(_) => panic!(),
 			Specifier::Weekly { .. } => todo!(),
 			Specifier::Daily { .. } => todo!(),
 		}

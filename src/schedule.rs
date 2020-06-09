@@ -27,14 +27,20 @@ impl<Tz: TimeZone> Schedule<Tz> {
 		Default::default()
 	}
 
-	pub fn effective(mut self, date_time: DateTime<Tz>) -> Self {
-		self.effective = Some(date_time);
-		self
+	pub fn effective(&self) -> &Option<DateTime<Tz>> {
+		&self.effective
 	}
 
-	pub fn expires(mut self, date_time: DateTime<Tz>) -> Self {
-		self.expires = Some(date_time);
-		self
+	pub fn effective_mut(&mut self) -> &mut Option<DateTime<Tz>> {
+		&mut self.effective
+	}
+
+	pub fn expires(&self) -> &Option<DateTime<Tz>> {
+		&self.expires
+	}
+
+	pub fn expires_mut(&mut self) -> &mut Option<DateTime<Tz>> {
+		&mut self.expires
 	}
 
 	pub fn part(mut self, part: Part<Tz>) -> Self {

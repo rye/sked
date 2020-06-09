@@ -1,4 +1,4 @@
-use chrono::{DateTime, TimeZone};
+use chrono::{prelude::*, DateTime, TimeZone};
 
 /// A specifier for when something happens.
 #[allow(dead_code)]
@@ -13,4 +13,10 @@ pub enum Specifier<Tz: TimeZone> {
 
 	/// An exact time
 	Exact(DateTime<Tz>),
+}
+
+#[derive(Debug)]
+pub struct Instances<'iteration, Tz: TimeZone> {
+	specifier: &'iteration Specifier<Tz>,
+	basis: DateTime<Tz>,
 }

@@ -25,6 +25,10 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 	type Item = chrono::DateTime<Tz>;
 
 	fn next(&mut self) -> Option<Self::Item> {
-		None
+		match self.specifier {
+			Specifier::Exact(_) => todo!(),
+			Specifier::Weekly { .. } => todo!(),
+			Specifier::Daily { .. } => todo!(),
+		}
 	}
 }

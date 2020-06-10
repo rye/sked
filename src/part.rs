@@ -1,5 +1,5 @@
 use super::Specifier;
-use chrono::TimeZone;
+use chrono::{DateTime, TimeZone};
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -37,5 +37,14 @@ impl<Tz: TimeZone> Part<Tz> {
 	pub fn note(mut self, note: &str) -> Self {
 		self.notes.push(note.to_string());
 		self
+	}
+
+	pub fn applies_at(&self, time: &DateTime<Tz>) -> bool {
+		match (self.open.as_ref(), self.close.as_ref()) {
+			(Some(_open), Some(_close)) => todo!(),
+			(None, Some(_)) => true,
+			(Some(_), None) => true,
+			(None, None) => true,
+		}
 	}
 }

@@ -1,4 +1,4 @@
-use super::{Reason, Schedule, Status, StatusChange};
+use super::{Part, Reason, Schedule, Status, StatusChange};
 use chrono::{DateTime, TimeZone};
 
 #[allow(dead_code)]
@@ -44,7 +44,28 @@ where
 
 	/// Compute the status of the space at the given time
 	// TODO Make actually functional
-	pub fn status_at(&self, _time: &DateTime<Tz>) -> Status {
+	pub fn status_at(&self, time: &DateTime<Tz>) -> Status {
+		let active_schedules: Vec<&Schedule<Tz>> = self
+			.schedules
+			.iter()
+			.filter(
+				|schedule| match (schedule.effective(), schedule.expires()) {
+					(Some(start), None) => start < time,
+					(Some(start), Some(end)) => start < time && time < end,
+					(None, Some(end)) => time < end,
+					(None, None) => true,
+				},
+			)
+			.collect();
+
+		// TODO consider selecting the "most specific" schedule?
+
+		let parts: Vec<&Part<Tz>> = active_schedules
+			.iter()
+			.map(|schedule| schedule.parts())
+			.flatten()
+			.collect();
+
 		Status::Closed(Reason::Part(None))
 	}
 

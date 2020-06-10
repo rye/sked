@@ -31,16 +31,6 @@ checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
 
 [[package]]
 name = "chrono"
-version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "158b0bd7d75cbb6bf9c25967a48a2e9f77da95876b858eadfabaa99cd069de6e"
-dependencies = [
- "num",
- "time",
-]
-
-[[package]]
-name = "chrono"
 version = "0.4.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "80094f509cf8b5ae86a4966a39b3ff66cd7e2a3e594accec3743ff3fabeab5b2"
@@ -249,11 +239,11 @@ dependencies = [
 
 [[package]]
 name = "lopdf"
-version = "0.23.0"
+version = "0.24.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fcaa03113adb9d334594b44a91356b8c8b8e55dd06d63372c7e6bf298bb28e11"
+checksum = "c431c050a4b89f90beb395b0bab726d609aab84d3b93b01b366bcec60412aea2"
 dependencies = [
- "chrono 0.3.0",
+ "chrono",
  "dtoa",
  "encoding",
  "flate2",
@@ -297,34 +287,12 @@ dependencies = [
 ]
 
 [[package]]
-name = "num"
-version = "0.1.42"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4703ad64153382334aa8db57c637364c322d3372e097840c72000dabdcf6156e"
-dependencies = [
- "num-integer",
- "num-iter",
- "num-traits",
-]
-
-[[package]]
 name = "num-integer"
 version = "0.1.42"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3f6ea62e9d81a77cd3ee9a2a5b9b609447857f3d358704331e4ef39eb247fcba"
 dependencies = [
  "autocfg",
- "num-traits",
-]
-
-[[package]]
-name = "num-iter"
-version = "0.1.40"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dfb0800a0291891dd9f4fe7bd9c19384f98f7fbe0cd0f39a2c6b88b9868bbc00"
-dependencies = [
- "autocfg",
- "num-integer",
  "num-traits",
 ]
 
@@ -390,7 +358,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fea0c4611f32f4c2bac73754f22dca1f57e6c1945e0590dae4e5f2a077b92367"
 dependencies = [
  "atty",
- "chrono 0.4.11",
+ "chrono",
  "colored",
  "log",
  "winapi",
@@ -400,7 +368,7 @@ dependencies = [
 name = "sked"
 version = "0.1.0"
 dependencies = [
- "chrono 0.4.11",
+ "chrono",
  "log",
  "lopdf",
  "simple_logger",

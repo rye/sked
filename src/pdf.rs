@@ -97,13 +97,13 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				Some(Object::Name(name)) => Ok(Self::SetColorSpaceForStrokingOperations {
 					name: name.to_vec(),
 				}),
-				_ => unimplemented!(),
+				_ => todo!(),
 			},
 			("cs", opds) => match opds.get(0) {
 				Some(Object::Name(name)) => Ok(Self::SetColorSpaceForNonstrokingOperations {
 					name: name.to_vec(),
 				}),
-				_ => unimplemented!(),
+				_ => todo!(),
 			},
 			("scn", _) => {
 				// Same as SCN, but for Nonstroking operations.
@@ -133,7 +133,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 					name: name.to_vec(),
 					size,
 				}),
-				_ => unimplemented!(),
+				_ => todo!(),
 			},
 			("Tc", opds) => match opds.get(0).map(to_f64).flatten() {
 				Some(spacing) => Ok(Self::SetCharacterSpacing { spacing }),

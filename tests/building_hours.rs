@@ -17,9 +17,7 @@ mod tests {
 	}
 
 	fn generate_space(name: &str) -> Space<FixedOffset> {
-		let schedule: Schedule<FixedOffset> = Schedule::new()
-			.effective(DateTime::parse_from_rfc3339("2020-01-01T00:00:00-06:00").unwrap())
-			.expires(DateTime::parse_from_rfc3339("2020-02-01T00:00:00-06:00").unwrap())
+		let mut schedule: Schedule<FixedOffset> = Schedule::new()
 			.part(
 				Part::new()
 					.open(Specifier::Weekly {
@@ -45,6 +43,11 @@ mod tests {
 						"Closed for lunch.".to_string(),
 					)))),
 			);
+
+		*schedule.effective_mut() =
+			Some(DateTime::parse_from_rfc3339("2020-01-01T00:00:00-06:00").unwrap());
+		*schedule.expires_mut() =
+			Some(DateTime::parse_from_rfc3339("2020-02-01T00:00:00-06:00").unwrap());
 
 		Space::new(name).schedule(schedule)
 	}

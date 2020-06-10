@@ -151,6 +151,9 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				opds.get(4).map(to_f64).flatten(),
 				opds.get(5).map(to_f64).flatten(),
 			) {
+				// N.B. In the PDF spec these use the names a, b, c, d, e, and f; these
+				// are used as generic parameters in the 3x3 transformation matrices,
+				// filling the first two columns column-wise.
 				(Some(a), Some(b), Some(c), Some(d), Some(e), Some(f)) => {
 					Ok(Self::SetTextMatrixAndTextLineMatrix { a, b, c, d, e, f })
 				}

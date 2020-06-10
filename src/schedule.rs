@@ -43,9 +43,25 @@ impl<Tz: TimeZone> Schedule<Tz> {
 		&mut self.expires
 	}
 
+	pub fn parts(&self) -> &Vec<Part<Tz>> {
+		&self.parts
+	}
+
+	pub fn parts_mut(&mut self) -> &mut Vec<Part<Tz>> {
+		&mut self.parts
+	}
+
 	pub fn part(mut self, part: Part<Tz>) -> Self {
 		self.parts.push(part);
 		self
+	}
+
+	pub fn exceptions(&self) -> &Vec<Exception<Tz>> {
+		&self.exceptions
+	}
+
+	pub fn exceptions_mut(&mut self) -> &mut Vec<Exception<Tz>> {
+		&mut self.exceptions
 	}
 
 	pub fn exception(mut self, exception: Exception<Tz>) -> Self {

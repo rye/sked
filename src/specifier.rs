@@ -2,7 +2,7 @@ use chrono::{prelude::*, DateTime, TimeZone};
 
 /// A specifier for when something happens.
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Specifier<Tz: TimeZone> {
 	/// A pattern of days and times which must be computed against to give a
 	/// definitive answer.
@@ -43,7 +43,7 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 				if self.basis.weekday() == specifier_day {
 					let instance = self.basis.date().and_time(specifier_time).unwrap();
 
-					self.basis = self.basis.to_owned() + chrono::Duration::weeks(1);
+					self.basis = self.basis.clone() + chrono::Duration::weeks(1);
 
 					Some(instance)
 				} else {
@@ -83,12 +83,15 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 }
 
 impl<Tz: TimeZone> Specifier<Tz> {
-	fn instances(&self, basis: DateTime<Tz>) -> Instances<Tz> {
+	pub fn instances(&self, basis: &DateTime<Tz>) -> Instances<Tz> {
 		let specifier = self;
-		Instances { specifier, basis }
+		Instances {
+			specifier,
+			basis: basis.to_owned(),
+		}
 	}
 
-	fn next(&self, n: usize, basis: DateTime<Tz>) -> Vec<DateTime<Tz>> {
+	fn next(&self, n: usize, basis: &DateTime<Tz>) -> Vec<DateTime<Tz>> {
 		self.instances(basis).take(n).collect()
 	}
 }
@@ -104,7 +107,7 @@ mod tests {
 			let now = chrono::Local::now();
 			let s = Specifier::Exact(now);
 			assert_eq!(
-				s.instances(chrono::Local::now())
+				s.instances(&chrono::Local::now())
 					.collect::<Vec<DateTime<chrono::Local>>>(),
 				vec![now]
 			);
@@ -117,7 +120,7 @@ mod tests {
 				time: "07:00".to_string(),
 			};
 			assert_eq!(
-				s.instances(t_ref)
+				s.instances(&t_ref)
 					.take(3)
 					.collect::<Vec<DateTime<chrono::FixedOffset>>>(),
 				vec![
@@ -136,7 +139,7 @@ mod tests {
 				time: "07:00".to_string(),
 			};
 			assert_eq!(
-				s.instances(t_ref)
+				s.instances(&t_ref)
 					.take(3)
 					.collect::<Vec<DateTime<chrono::FixedOffset>>>(),
 				vec![
@@ -155,7 +158,7 @@ mod tests {
 				time: "07:00".to_string(),
 			};
 			assert_eq!(
-				s.instances(t_ref)
+				s.instances(&t_ref)
 					.take(3)
 					.collect::<Vec<DateTime<chrono::FixedOffset>>>(),
 				vec![

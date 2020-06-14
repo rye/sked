@@ -1,19 +1,19 @@
 use chrono::{DateTime, TimeZone};
 
-#[derive(Debug, PartialEq)]
-pub enum Reason {
+#[derive(Clone, Debug, PartialEq)]
+pub enum Reason<'schedule, Tz: TimeZone> {
 	Exception(Option<String>),
-	Part(Option<String>),
+	Part(Option<&'schedule super::Part<Tz>>),
 }
 
-#[derive(Debug, PartialEq)]
-pub enum Status {
-	Open(Reason),
-	Closed(Reason),
+#[derive(Clone, Debug, PartialEq)]
+pub enum Status<'schedule, Tz: TimeZone> {
+	Open(Reason<'schedule, Tz>),
+	Closed(Reason<'schedule, Tz>),
 }
 
-#[derive(Debug, PartialEq)]
-pub enum StatusChange<Tz: TimeZone> {
-	Opening(DateTime<Tz>, Reason),
-	Closing(DateTime<Tz>, Reason),
+#[derive(Clone, Debug, PartialEq)]
+pub enum StatusChange<'schedule, Tz: TimeZone> {
+	Opening(DateTime<Tz>, Reason<'schedule, Tz>),
+	Closing(DateTime<Tz>, Reason<'schedule, Tz>),
 }

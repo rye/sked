@@ -1,14 +1,14 @@
-use super::{Part, Reason, Schedule, Status, StatusChange};
+use super::{Exception, Part, Reason, Schedule, Status, StatusChange};
 use chrono::{DateTime, TimeZone};
 
 #[allow(dead_code)]
 #[derive(Debug)]
-pub struct Space<Tz: TimeZone> {
+pub struct Space<'schedule, Tz: TimeZone> {
 	name: String,
-	schedules: Vec<Schedule<Tz>>,
+	schedules: Vec<Schedule<'schedule, Tz>>,
 }
 
-impl<Tz: TimeZone> Default for Space<Tz> {
+impl<'schedule, Tz: TimeZone> Default for Space<'schedule, Tz> {
 	fn default() -> Self {
 		Self {
 			name: String::new(),
@@ -17,14 +17,14 @@ impl<Tz: TimeZone> Default for Space<Tz> {
 	}
 }
 
-impl<Tz: TimeZone> Space<Tz> {
-	pub fn schedule(mut self, schedule: Schedule<Tz>) -> Self {
+impl<'schedule, Tz: TimeZone> Space<'schedule, Tz> {
+	pub fn schedule(mut self, schedule: Schedule<'schedule, Tz>) -> Self {
 		self.schedules.push(schedule);
 		self
 	}
 }
 
-impl<Tz: TimeZone> Space<Tz>
+impl<'schedule, Tz: TimeZone> Space<'schedule, Tz>
 where
 	DateTime<Tz>: core::convert::From<DateTime<chrono::offset::Local>>,
 {
@@ -36,7 +36,7 @@ where
 	}
 
 	/// Compute the status of the space at the current time
-	pub fn status(&self) -> Status {
+	pub fn status(&'schedule self) -> Status<'schedule, Tz> {
 		use chrono::offset::Local;
 		let now: DateTime<Local> = Local::now();
 		self.status_at(&DateTime::from(now))
@@ -44,8 +44,8 @@ where
 
 	/// Compute the status of the space at the given time
 	// TODO Make actually functional
-	pub fn status_at(&self, time: &DateTime<Tz>) -> Status {
-		let active_schedules: Vec<&Schedule<Tz>> = self
+	pub fn status_at(&'schedule self, time: &DateTime<Tz>) -> Status<'schedule, Tz> {
+		let active_schedules: Vec<&Schedule<'schedule, Tz>> = self
 			.schedules
 			.iter()
 			.filter(
@@ -66,7 +66,34 @@ where
 			.flatten()
 			.collect();
 
-		Status::Closed(Reason::Part(None))
+		let exceptions: Vec<&Exception<Tz>> = active_schedules
+			.iter()
+			.map(|schedule| schedule.exceptions())
+			.flatten()
+			.collect();
+
+		let current_parts: Vec<&&Part<Tz>> = parts.iter().filter(|p| p.applies_at(time)).collect();
+
+		let current_exceptions: Vec<&&Exception<Tz>> =
+			exceptions.iter().filter(|e| e.applies_at(time)).collect();
+
+		eprintln!("{}, x{}", current_parts.len(), current_exceptions.len());
+
+		if current_exceptions.len() > 0 {
+			let exception = current_exceptions[0];
+
+			let effect = exception.effect();
+
+			if let Some(effect) = effect {
+				return (*effect).clone();
+			}
+		}
+
+		if current_parts.len() > 0 {
+			Status::Open(Reason::Part(None))
+		} else {
+			Status::Closed(Reason::Part(None))
+		}
 	}
 
 	pub fn next_status_change(&self) -> Option<StatusChange<Tz>> {

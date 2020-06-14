@@ -17,6 +17,19 @@ mod tests {
 	}
 
 	fn generate_space(name: &str) -> Space<FixedOffset> {
+		let mut exception = Exception::new()
+			.effective(Specifier::Weekly {
+				day: "Thursday".to_string(),
+				time: "10:15".to_string(),
+			})
+			.expires(Specifier::Weekly {
+				day: "Thursday".to_string(),
+				time: "11:00".to_string(),
+			});
+		*exception.effect_mut() = Some(Status::Closed(Reason::Exception(Some(
+			"Closed for lunch.".to_string(),
+		))));
+
 		let mut schedule: Schedule<FixedOffset> = Schedule::new()
 			.part(
 				Part::new()
@@ -29,20 +42,7 @@ mod tests {
 						time: "17:00".to_string(),
 					}),
 			)
-			.exception(
-				Exception::new()
-					.effective(Specifier::Weekly {
-						day: "Thursday".to_string(),
-						time: "10:15".to_string(),
-					})
-					.expires(Specifier::Weekly {
-						day: "Thursday".to_string(),
-						time: "11:00".to_string(),
-					})
-					.effect(Status::Closed(Reason::Exception(Some(
-						"Closed for lunch.".to_string(),
-					)))),
-			);
+			.exception(exception);
 
 		*schedule.effective_mut() =
 			Some(DateTime::parse_from_rfc3339("2020-01-01T00:00:00-06:00").unwrap());

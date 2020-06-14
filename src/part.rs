@@ -2,7 +2,7 @@ use super::Specifier;
 use chrono::{DateTime, TimeZone};
 
 #[allow(dead_code)]
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub struct Part<Tz: TimeZone> {
 	open: Option<Specifier<Tz>>,
 	close: Option<Specifier<Tz>>,
@@ -41,7 +41,12 @@ impl<Tz: TimeZone> Part<Tz> {
 
 	pub fn applies_at(&self, time: &DateTime<Tz>) -> bool {
 		match (self.open.as_ref(), self.close.as_ref()) {
-			(Some(_open), Some(_close)) => todo!(),
+			(Some(open), Some(close)) => {
+				let open = open.instances(time).nth(0).unwrap();
+				let close = close.instances(time).nth(0).unwrap();
+
+				(open..close).contains(time)
+			}
 			(None, Some(_)) => true,
 			(Some(_), None) => true,
 			(None, None) => true,

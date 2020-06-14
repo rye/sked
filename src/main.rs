@@ -1,5 +1,4 @@
-use lopdf::content::*;
-use lopdf::*;
+use lopdf::{Document, Object, ObjectId};
 
 #[allow(unused)]
 use log::{debug, error, info, log, trace, warn};
@@ -7,7 +6,7 @@ use log::{debug, error, info, log, trace, warn};
 use std::env;
 use std::path;
 
-use std::collections::{BTreeSet, VecDeque};
+use std::collections::BTreeSet;
 
 use sked::pdf::Pdf;
 

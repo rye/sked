@@ -1,5 +1,5 @@
 use chrono::{DateTime, FixedOffset};
-use sked::{Exception, Part, Reason, Schedule, Space, Specifier, Status, StatusChange};
+use sked::{Exception, Part, Reason, Schedule, Space, Specifier, Status};
 
 #[cfg(test)]
 mod tests {

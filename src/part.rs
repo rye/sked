@@ -2,7 +2,7 @@ use super::Specifier;
 use chrono::{DateTime, TimeZone};
 
 #[allow(dead_code)]
-#[derive(Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Part<Tz: TimeZone> {
 	open: Option<Specifier<Tz>>,
 	close: Option<Specifier<Tz>>,

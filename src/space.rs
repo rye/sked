@@ -72,10 +72,17 @@ where
 			.flatten()
 			.collect();
 
-		let current_parts: Vec<&&Part<Tz>> = parts.iter().filter(|p| p.applies_at(time)).collect();
+		let current_parts: Vec<&Part<Tz>> = parts
+			.iter()
+			.cloned()
+			.filter(|p| p.applies_at(time))
+			.collect();
 
-		let current_exceptions: Vec<&&Exception<Tz>> =
-			exceptions.iter().filter(|e| e.applies_at(time)).collect();
+		let current_exceptions: Vec<&Exception<Tz>> = exceptions
+			.iter()
+			.cloned()
+			.filter(|e| e.applies_at(time))
+			.collect();
 
 		eprintln!("{}, x{}", current_parts.len(), current_exceptions.len());
 

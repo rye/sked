@@ -86,7 +86,7 @@ where
 
 		eprintln!("{}, x{}", current_parts.len(), current_exceptions.len());
 
-		if current_exceptions.len() > 0 {
+		if !current_exceptions.is_empty() {
 			let exception = current_exceptions[0];
 
 			let effect = exception.effect();
@@ -96,7 +96,7 @@ where
 			}
 		}
 
-		if current_parts.len() > 0 {
+		if !current_parts.is_empty() {
 			Status::Open(Reason::Part(None))
 		} else {
 			Status::Closed(Reason::Part(None))

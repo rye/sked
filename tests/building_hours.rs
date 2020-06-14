@@ -15,12 +15,7 @@ mod tests {
 			}
 		};
 		($test_name:ident, $time:literal, $expected:expr) => {
-			#[test]
-			fn $test_name() {
-				let (space, _): (Space<FixedOffset>, Part<FixedOffset>) = generate_space("asdf");
-				let time: DateTime<FixedOffset> = DateTime::parse_from_rfc3339($time).unwrap();
-				assert_eq!(space.status_at(&time), $expected);
-			}
+			check_space_at_time!($test_name, $time, __nil__, $expected);
 		};
 	}
 

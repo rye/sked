@@ -56,7 +56,7 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 						difference += 7;
 					}
 
-					let offset = chrono::Duration::days(difference.into());
+					let offset = chrono::Duration::days(difference);
 
 					let instance = (self.basis.date() + offset)
 						.and_time(specifier_time)

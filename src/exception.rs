@@ -45,8 +45,8 @@ impl<'schedule, Tz: TimeZone> Exception<'schedule, Tz> {
 	pub fn applies_at(&self, time: &DateTime<Tz>) -> bool {
 		match (self.effective.as_ref(), self.expires.as_ref()) {
 			(Some(open), Some(close)) => {
-				let open = open.instances(time).nth(0).unwrap();
-				let close = close.instances(time).nth(0).unwrap();
+				let open = open.instances(time).next().unwrap();
+				let close = close.instances(time).next().unwrap();
 
 				(open..close).contains(time)
 			}

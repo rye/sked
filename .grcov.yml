@@ -1,0 +1,10 @@
+branch: true
+llvm: true
+output-type: lcov
+output-path: ./lcov.info
+prefix-dir: /home/runner/work/sked/sked/
+
+ignore:
+- "/*"
+- "C:/*"
+- "../*"

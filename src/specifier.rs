@@ -36,7 +36,7 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 			Specifier::Weekly { day, time } => {
 				let specifier_day: chrono::Weekday = day.parse().expect("invalid day specifier");
 				let specifier_time: chrono::NaiveTime = NaiveTime::parse_from_str(time, "%H:%M")
-					.or(NaiveTime::parse_from_str(time, "%H:%M:%S"))
+					.or_else(|_| NaiveTime::parse_from_str(time, "%H:%M:%S"))
 					.expect("invalid time specifier");
 
 				// If the basis weekday is the same as the specifier, then return today's instance
@@ -69,7 +69,7 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 			}
 			Specifier::Daily { time } => {
 				let specifier_time: chrono::NaiveTime = NaiveTime::parse_from_str(time, "%H:%M")
-					.or(NaiveTime::parse_from_str(time, "%H:%M:%S"))
+					.or_else(|_| NaiveTime::parse_from_str(time, "%H:%M:%S"))
 					.expect("invalid time specifier");
 
 				let instance = self.basis.date().and_time(specifier_time).unwrap();

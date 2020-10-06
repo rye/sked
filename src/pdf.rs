@@ -70,6 +70,111 @@ pub enum Operation {
 	EndPathWithoutFillingOrStroking,
 }
 
+pub struct GraphicsState {
+	current_transformation_matrix: [f64; 6],
+	clipping_path: (),
+	color_space: (),
+	color: (),
+	text_state: (),
+	line_width: f64,
+	line_cap: u32,
+	line_join: u32,
+	miter_limit: f64,
+	//dash_pattern: ()
+	rendering_intent: String,
+	stroke_adjustment: bool,
+	blend_mode: String,
+	soft_mask: String,
+	alpha_constant: f64,
+}
+
+pub struct CoordinateSpace {
+	origin: [f64; 2],
+	orientation: ([f64; 2], [f64; 2]),
+	axis_length: (f64, f64),
+}
+
+/// A Coordinate Transformation Matrix (CTM)
+///
+/// A 3x3 matrix, but with only the first two columns configured.
+/// The parameters are specified left-to-right, so that the subscript-to-cell
+/// mapping is:
+///
+/// ```
+/// [  .0   .1  0.0 ]
+/// [  .2   .3  0.0 ]
+/// [  .4   .5  1.0 ]
+/// ```
+pub struct TransformationMatrix(f64, f64, f64, f64, f64, f64);
+pub struct Coordinates(f64, f64);
+
+impl Coordinates {
+	fn transform(&self, ctm: &TransformationMatrix) -> Coordinates {
+		let x_prime: f64 = ctm.0 * self.0 + ctm.2 * self.1 + ctm.4;
+		let y_prime: f64 = ctm.1 * self.0 + ctm.2 * self.1 + ctm.5;
+		Coordinates(x_prime, y_prime)
+	}
+}
+
+impl CoordinateSpace {
+	pub fn from_page_dictionary(dictionary: &lopdf::Object) -> Self {
+		let dictionary: &lopdf::Dictionary = match dictionary {
+			lopdf::Object::Dictionary(dictionary) => dictionary,
+
+			// According to Section 7.7.3.3 of the PDF spec, the leaves of the page
+			// tree are page objects, each of which is a dictionary specifying the
+			// attributes of a single page of the document.  It is, therefore, an
+			// error (logic or otherwise) to have anything besides a Dictionary object
+			// stored in the leaves of the page tree, and therefore we should not
+			// support that.
+			//
+			// TODO Consider, instead of unwinding via panic, returning a Result?
+			_ => unreachable!(),
+		};
+
+		let media_box: Vec<f64> = dictionary
+			.get("MediaBox".as_bytes())
+			.map(|object| match object {
+				Object::Array(array) => array
+					.iter()
+					.map(|element| match element {
+						Object::Real(number) => number,
+						_ => unreachable!(),
+					})
+					.copied()
+					.collect(),
+				_ => unreachable!(),
+			})
+			.ok()
+			.unwrap();
+		let crop_box: Vec<f64> = dictionary
+			.get("CropBox".as_bytes())
+			.map(|object| match object {
+				Object::Array(array) => array
+					.iter()
+					.map(|element| match element {
+						Object::Real(number) => number,
+						_ => unreachable!(),
+					})
+					.copied()
+					.collect(),
+				_ => unreachable!(),
+			})
+			.unwrap_or(media_box);
+
+		let origin: [f64; 2] = [crop_box[0], crop_box[1]];
+		// TODO fix?
+		let orientation: ([f64; 2], [f64; 2]) = ([1.0, 0.0], [0.0, 1.0]);
+		let axis_length: (f64, f64) = (1.0, 1.0);
+
+		Self {
+			origin,
+			orientation,
+			axis_length,
+		}
+	}
+}
+
 impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 	type Error = error::ParseError;
 

@@ -133,7 +133,7 @@ impl CoordinateSpace {
 		};
 
 		let media_box: Vec<f64> = dictionary
-			.get("MediaBox".as_bytes())
+			.get(b"MediaBox")
 			.map(|object| match object {
 				Object::Array(array) => array
 					.iter()
@@ -148,7 +148,7 @@ impl CoordinateSpace {
 			.ok()
 			.unwrap();
 		let crop_box: Vec<f64> = dictionary
-			.get("CropBox".as_bytes())
+			.get(b"CropBox")
 			.map(|object| match object {
 				Object::Array(array) => array
 					.iter()

@@ -12,5 +12,5 @@ default = ["simple_logger"]
 chrono = "0.4.13"
 log = "0.4.11"
 lopdf = "0.26.0"
-simple_logger = { version = "1.9.0", optional = true }
+simple_logger = { version = "1.11.0", optional = true }
 

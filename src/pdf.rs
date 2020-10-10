@@ -100,7 +100,7 @@ pub struct CoordinateSpace {
 /// The parameters are specified left-to-right, so that the subscript-to-cell
 /// mapping is:
 ///
-/// ```
+/// ```text
 /// [  .0   .1  0.0 ]
 /// [  .2   .3  0.0 ]
 /// [  .4   .5  1.0 ]

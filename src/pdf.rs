@@ -186,7 +186,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 		fn to_f64(object: &Object) -> Option<f64> {
 			match object {
 				Object::Real(x) => Some(*x),
-				Object::Integer(x) => Some(*x as f64),
+				Object::Integer(x) => f64::try_from(i32::try_from(*x).ok()?).ok(),
 				_ => None,
 			}
 		}

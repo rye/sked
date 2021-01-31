@@ -110,8 +110,8 @@ pub struct Coordinates(f64, f64);
 
 impl Coordinates {
 	fn transform(&self, ctm: &TransformationMatrix) -> Coordinates {
-		let x_prime: f64 = ctm.0.0 * self.0 + ctm.1.0 * self.1 + ctm.2.0;
-		let y_prime: f64 = ctm.0.1 * self.0 + ctm.1.1 * self.1 + ctm.2.1;
+		let x_prime: f64 = ctm.0 .0 * self.0 + ctm.1 .0 * self.1 + ctm.2 .0;
+		let y_prime: f64 = ctm.0 .1 * self.0 + ctm.1 .1 * self.1 + ctm.2 .1;
 		Coordinates(x_prime, y_prime)
 	}
 }

@@ -1,5 +1,8 @@
 use lopdf::{Document, Object, ObjectId};
 
+#[cfg(feature = "simple_logger")]
+use simple_logger::SimpleLogger;
+
 #[allow(unused)]
 use log::{debug, error, info, log, trace, warn};
 
@@ -12,7 +15,7 @@ use sked::pdf::Pdf;
 
 fn main() {
 	#[cfg(feature = "simple_logger")]
-	simple_logger::init().expect("couldn't init simple_logger");
+	SimpleLogger::new().init().expect("couldn't init simple_logger");
 
 	let file = env::args().nth(1).unwrap();
 	println!("Loading from {}...", file);

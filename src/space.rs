@@ -84,8 +84,6 @@ where
 			.filter(|e| e.applies_at(time))
 			.collect();
 
-		eprintln!("{}, x{}", current_parts.len(), current_exceptions.len());
-
 		if !current_exceptions.is_empty() {
 			let exception = current_exceptions[0];
 

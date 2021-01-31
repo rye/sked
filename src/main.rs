@@ -15,7 +15,9 @@ use sked::pdf::Pdf;
 
 fn main() {
 	#[cfg(feature = "simple_logger")]
-	SimpleLogger::new().init().expect("couldn't init simple_logger");
+	SimpleLogger::new()
+		.init()
+		.expect("couldn't init simple_logger");
 
 	let file = env::args().nth(1).unwrap();
 	println!("Loading from {}...", file);

@@ -51,7 +51,7 @@ impl<'schedule, Tz: TimeZone> Schedule<'schedule, Tz> {
 		&mut self.parts
 	}
 
-	pub fn part(mut self, part: Part<Tz>) -> Self {
+	pub fn part(&mut self, part: Part<Tz>) -> &mut Self {
 		self.parts.push(part);
 		self
 	}
@@ -64,7 +64,7 @@ impl<'schedule, Tz: TimeZone> Schedule<'schedule, Tz> {
 		&mut self.exceptions
 	}
 
-	pub fn exception(mut self, exception: Exception<'schedule, Tz>) -> Self {
+	pub fn exception(&mut self, exception: Exception<'schedule, Tz>) -> &mut Self {
 		self.exceptions.push(exception);
 		self
 	}

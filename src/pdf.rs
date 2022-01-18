@@ -351,7 +351,7 @@ impl Pdf {
 		Self::default()
 	}
 
-	pub fn version(mut self, version: &str) -> Self {
+	pub fn version(&mut self, version: &str) -> &mut Self {
 		self.version = Some(version.to_string());
 		self
 	}

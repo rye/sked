@@ -24,17 +24,17 @@ impl<Tz: TimeZone> Part<Tz> {
 		Self::default()
 	}
 
-	pub fn open(mut self, ts: Specifier<Tz>) -> Self {
+	pub fn open(&mut self, ts: Specifier<Tz>) -> &mut Self {
 		self.open = Some(ts);
 		self
 	}
 
-	pub fn close(mut self, ts: Specifier<Tz>) -> Self {
+	pub fn close(&mut self, ts: Specifier<Tz>) -> &mut Self {
 		self.close = Some(ts);
 		self
 	}
 
-	pub fn note(mut self, note: &str) -> Self {
+	pub fn note(&mut self, note: &str) -> &mut Self {
 		self.notes.push(note.to_string());
 		self
 	}

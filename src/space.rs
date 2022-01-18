@@ -62,14 +62,12 @@ where
 
 		let parts: Vec<&Part<Tz>> = active_schedules
 			.iter()
-			.map(|schedule| schedule.parts())
-			.flatten()
+			.flat_map(|schedule| schedule.parts())
 			.collect();
 
 		let exceptions: Vec<&Exception<Tz>> = active_schedules
 			.iter()
-			.map(|schedule| schedule.exceptions())
-			.flatten()
+			.flat_map(|schedule| schedule.exceptions())
 			.collect();
 
 		let current_parts: Vec<&Part<Tz>> = parts

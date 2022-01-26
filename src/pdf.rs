@@ -179,6 +179,7 @@ impl CoordinateSpace {
 impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 	type Error = error::ParseError;
 
+	// TODO(rye): This is a very long method.  Can we make it smaller?
 	#[allow(clippy::many_single_char_names)]
 	fn try_from(operation: lopdf::content::Operation) -> error::Result<Operation> {
 		/// Since `Object::as_f64` fails if `Object` is not a `Object::Real`, this

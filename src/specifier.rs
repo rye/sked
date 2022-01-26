@@ -27,8 +27,8 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 	fn next(&mut self) -> Option<Self::Item> {
 		match self.specifier {
 			Specifier::Exact(dt) if dt != &self.basis => {
-				let next = dt.to_owned();
-				self.basis = dt.to_owned();
+				let next = dt.clone();
+				self.basis = dt.clone();
 				Some(next)
 			}
 			Specifier::Exact(dt) if dt == &self.basis => None,
@@ -62,7 +62,7 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 						.and_time(specifier_time)
 						.unwrap();
 
-					self.basis = self.basis.to_owned() + chrono::Duration::weeks(1);
+					self.basis = self.basis.clone() + chrono::Duration::weeks(1);
 
 					Some(instance)
 				}
@@ -74,7 +74,7 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 
 				let instance = self.basis.date().and_time(specifier_time).unwrap();
 
-				self.basis = self.basis.to_owned() + chrono::Duration::days(1);
+				self.basis = self.basis.clone() + chrono::Duration::days(1);
 
 				Some(instance)
 			}
@@ -85,10 +85,8 @@ impl<'iteration, Tz: TimeZone> Iterator for Instances<'iteration, Tz> {
 impl<Tz: TimeZone> Specifier<Tz> {
 	pub fn instances(&self, basis: &DateTime<Tz>) -> Instances<Tz> {
 		let specifier = self;
-		Instances {
-			specifier,
-			basis: basis.to_owned(),
-		}
+		let basis = basis.clone();
+		Instances { specifier, basis }
 	}
 
 	fn next(&self, n: usize, basis: &DateTime<Tz>) -> Vec<DateTime<Tz>> {

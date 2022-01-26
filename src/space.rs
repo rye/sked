@@ -73,13 +73,13 @@ where
 
 		let current_parts: Vec<&Part<Tz>> = parts
 			.iter()
-			.cloned()
+			.copied()
 			.filter(|p| p.applies_at(time))
 			.collect();
 
 		let current_exceptions: Vec<&Exception<Tz>> = exceptions
 			.iter()
-			.cloned()
+			.copied()
 			.filter(|e| e.applies_at(time))
 			.collect();
 

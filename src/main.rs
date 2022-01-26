@@ -26,7 +26,7 @@ fn main() {
 
 	let mut doc = Document::load(path).unwrap();
 
-	let unvisited_object_ids: BTreeSet<ObjectId> = doc.objects.keys().cloned().collect();
+	let unvisited_object_ids: BTreeSet<ObjectId> = doc.objects.keys().copied().collect();
 
 	let pdf: Pdf = Pdf::new().version(&doc.version);
 
@@ -35,7 +35,7 @@ fn main() {
 			info!("Traversing {:?}", object);
 		})
 		.iter()
-		.cloned()
+		.copied()
 		.collect();
 
 	println!(

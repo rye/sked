@@ -33,7 +33,7 @@ where
 	pub fn new(name: &str) -> Space<Tz> {
 		Space {
 			name: name.to_string(),
-			..Default::default()
+			..Space::default()
 		}
 	}
 

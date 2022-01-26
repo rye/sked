@@ -25,7 +25,7 @@ impl<'schedule, Tz: TimeZone> Default for Schedule<'schedule, Tz> {
 impl<'schedule, Tz: TimeZone> Schedule<'schedule, Tz> {
 	#[must_use]
 	pub fn new() -> Schedule<'schedule, Tz> {
-		Default::default()
+		Self::default()
 	}
 
 	pub fn effective(&self) -> &Option<DateTime<Tz>> {

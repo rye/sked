@@ -20,6 +20,7 @@ impl<Tz: TimeZone> Default for Part<Tz> {
 }
 
 impl<Tz: TimeZone> Part<Tz> {
+	#[must_use]
 	pub fn new() -> Self {
 		Self::default()
 	}

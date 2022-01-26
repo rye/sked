@@ -29,6 +29,7 @@ impl<'schedule, Tz: TimeZone> Space<'schedule, Tz>
 where
 	DateTime<Tz>: core::convert::From<DateTime<chrono::offset::Local>>,
 {
+	#[must_use]
 	pub fn new(name: &str) -> Space<Tz> {
 		Space {
 			name: name.to_string(),
@@ -37,6 +38,7 @@ where
 	}
 
 	/// Compute the status of the space at the current time
+	#[must_use]
 	pub fn status(&'schedule self) -> Status<'schedule, Tz> {
 		use chrono::offset::Local;
 		let now: DateTime<Local> = Local::now();
@@ -101,6 +103,7 @@ where
 		}
 	}
 
+	#[must_use]
 	pub fn next_status_change(&self) -> Option<StatusChange<Tz>> {
 		use chrono::offset::Local;
 		let now: DateTime<Local> = Local::now();

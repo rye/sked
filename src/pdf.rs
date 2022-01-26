@@ -117,6 +117,7 @@ impl Coordinates {
 }
 
 impl CoordinateSpace {
+	#[must_use]
 	pub fn from_page_dictionary(dictionary: &lopdf::Object) -> Self {
 		let dictionary: &lopdf::Dictionary = match dictionary {
 			lopdf::Object::Dictionary(dictionary) => dictionary,

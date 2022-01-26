@@ -50,9 +50,7 @@ impl<Tz: TimeZone> Part<Tz> {
 
 				(open..close).contains(time)
 			}
-			(None, Some(_)) => true,
-			(Some(_), None) => true,
-			(None, None) => true,
+			(_, _) => true,
 		}
 	}
 }

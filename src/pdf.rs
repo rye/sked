@@ -181,9 +181,9 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 
 	#[allow(clippy::many_single_char_names)]
 	fn try_from(operation: lopdf::content::Operation) -> error::Result<Operation> {
-		/// Since Object::as_f64 fails if Object is not a Object::Real, this
-		/// function can coerce an Object::Integer to an Object::Real, and will
-		/// unwrap into an Option<f64> if either of those variants are given.
+		/// Since `Object::as_f64` fails if `Object` is not a `Object::Real`, this
+		/// function can coerce an `Object::Integer` to an `Object::Real`, and will
+		/// unwrap into an `Option<f64>` if either of those variants are given.
 		fn to_f64(object: &Object) -> Option<f64> {
 			match object {
 				Object::Real(x) => Some(*x),

@@ -95,11 +95,11 @@ where
 			}
 		}
 
-		if !current_parts.is_empty() {
+		if current_parts.is_empty() {
+			Status::Closed(Reason::Part(None))
+		} else {
 			let part = current_parts[0];
 			Status::Open(Reason::Part(Some(part)))
-		} else {
-			Status::Closed(Reason::Part(None))
 		}
 	}
 

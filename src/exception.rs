@@ -20,6 +20,7 @@ impl<'schedule, Tz: TimeZone> Default for Exception<'schedule, Tz> {
 }
 
 impl<'schedule, Tz: TimeZone> Exception<'schedule, Tz> {
+	#[must_use]
 	pub fn new() -> Self {
 		Self::default()
 	}

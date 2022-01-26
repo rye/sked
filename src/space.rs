@@ -18,6 +18,7 @@ impl<'schedule, Tz: TimeZone> Default for Space<'schedule, Tz> {
 }
 
 impl<'schedule, Tz: TimeZone> Space<'schedule, Tz> {
+	#[must_use]
 	pub fn schedule(mut self, schedule: Schedule<'schedule, Tz>) -> Self {
 		self.schedules.push(schedule);
 		self
@@ -62,14 +63,12 @@ where
 
 		let parts: Vec<&Part<Tz>> = active_schedules
 			.iter()
-			.map(|schedule| schedule.parts())
-			.flatten()
+			.flat_map(|schedule| schedule.parts())
 			.collect();
 
 		let exceptions: Vec<&Exception<Tz>> = active_schedules
 			.iter()
-			.map(|schedule| schedule.exceptions())
-			.flatten()
+			.flat_map(|schedule| schedule.exceptions())
 			.collect();
 
 		let current_parts: Vec<&Part<Tz>> = parts

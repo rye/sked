@@ -233,28 +233,28 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				Ok(Self::SetColorForNonstrokingOperations)
 			}
 
-			("Tf", opds) => match (opds.get(0), opds.get(1).map(to_f64).flatten()) {
+			("Tf", opds) => match (opds.get(0), opds.get(1).and_then(to_f64)) {
 				(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
 					name: name.to_vec(),
 					size,
 				}),
 				_ => todo!(),
 			},
-			("Tc", opds) => match opds.get(0).map(to_f64).flatten() {
+			("Tc", opds) => match opds.get(0).and_then(to_f64) {
 				Some(spacing) => Ok(Self::SetCharacterSpacing { spacing }),
 				_ => Err(error::ParseError::OperandType),
 			},
-			("Tw", opds) => match opds.get(0).map(to_f64).flatten() {
+			("Tw", opds) => match opds.get(0).and_then(to_f64) {
 				Some(spacing) => Ok(Self::SetWordSpacing { spacing }),
 				_ => Err(error::ParseError::OperandType),
 			},
 			("Tm", opds) => match (
-				opds.get(0).map(to_f64).flatten(),
-				opds.get(1).map(to_f64).flatten(),
-				opds.get(2).map(to_f64).flatten(),
-				opds.get(3).map(to_f64).flatten(),
-				opds.get(4).map(to_f64).flatten(),
-				opds.get(5).map(to_f64).flatten(),
+				opds.get(0).and_then(to_f64),
+				opds.get(1).and_then(to_f64),
+				opds.get(2).and_then(to_f64),
+				opds.get(3).and_then(to_f64),
+				opds.get(4).and_then(to_f64),
+				opds.get(5).and_then(to_f64),
 			) {
 				// N.B. In the PDF spec these use the names a, b, c, d, e, and f; these
 				// are used as generic parameters in the 3x3 transformation matrices,
@@ -299,27 +299,21 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			("q", _) => Ok(Self::SaveGraphicsState),
 			("Q", _) => Ok(Self::RestoreGraphicsState),
 
-			("Td", opds) => match (
-				opds.get(0).map(to_f64).flatten(),
-				opds.get(1).map(to_f64).flatten(),
-			) {
+			("Td", opds) => match (opds.get(0).and_then(to_f64), opds.get(1).and_then(to_f64)) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPosition { t_x, t_y }),
 				_ => todo!(),
 			},
-			("TD", opds) => match (
-				opds.get(0).map(to_f64).flatten(),
-				opds.get(1).map(to_f64).flatten(),
-			) {
+			("TD", opds) => match (opds.get(0).and_then(to_f64), opds.get(1).and_then(to_f64)) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPositionAndSetLeading { t_x, t_y }),
 				_ => todo!(),
 			},
 			("T*", _) => Ok(Self::MoveToStartOfNextLine),
 
 			("re", opds) => match (
-				opds.get(0).map(to_f64).flatten(),
-				opds.get(1).map(to_f64).flatten(),
-				opds.get(2).map(to_f64).flatten(),
-				opds.get(3).map(to_f64).flatten(),
+				opds.get(0).and_then(to_f64),
+				opds.get(1).and_then(to_f64),
+				opds.get(2).and_then(to_f64),
+				opds.get(3).and_then(to_f64),
 			) {
 				(Some(x), Some(y), Some(width), Some(height)) => Ok(Self::AppendRectangleToPath {
 					x,
@@ -351,6 +345,7 @@ impl Pdf {
 		Self::default()
 	}
 
+	#[must_use]
 	pub fn version(mut self, version: &str) -> Self {
 		self.version = Some(version.to_string());
 		self

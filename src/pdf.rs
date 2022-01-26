@@ -200,15 +200,15 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			("ET", _) => Ok(Self::EndTextObject),
 
 			("CS", opds) => match opds.get(0) {
-				Some(Object::Name(name)) => Ok(Self::SetColorSpaceForStrokingOperations {
-					name: name.to_vec(),
-				}),
+				Some(Object::Name(name)) => {
+					Ok(Self::SetColorSpaceForStrokingOperations { name: name.clone() })
+				}
 				_ => todo!(),
 			},
 			("cs", opds) => match opds.get(0) {
-				Some(Object::Name(name)) => Ok(Self::SetColorSpaceForNonstrokingOperations {
-					name: name.to_vec(),
-				}),
+				Some(Object::Name(name)) => {
+					Ok(Self::SetColorSpaceForNonstrokingOperations { name: name.clone() })
+				}
 				_ => todo!(),
 			},
 			("scn", _) => {
@@ -236,7 +236,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 
 			("Tf", opds) => match (opds.get(0), opds.get(1).and_then(to_f64)) {
 				(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
-					name: name.to_vec(),
+					name: name.clone(),
 					size,
 				}),
 				_ => todo!(),
@@ -272,7 +272,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 						.map(|element: &Object| -> error::Result<String> {
 							match element {
 								Object::String(bytes, _format) => {
-									String::from_utf8(bytes.to_vec()).map_err(Into::into)
+									String::from_utf8(bytes.clone()).map_err(Into::into)
 								}
 								Object::Real(_f) => Ok("".to_string()),
 								Object::Integer(_f) => Ok("".to_string()),
@@ -291,7 +291,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			},
 			("Tj", opds) => match opds.get(0) {
 				Some(Object::String(bytes, _format)) => {
-					let body = String::from_utf8(bytes.to_vec()).map_err(Into::into);
+					let body = String::from_utf8(bytes.clone()).map_err(Into::into);
 					body.map(|body: String| Self::ShowText { body })
 				}
 				_ => Err(error::ParseError::OperandType),

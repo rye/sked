@@ -32,11 +32,13 @@ impl<'schedule, Tz: TimeZone> Exception<'schedule, Tz> {
 		&self.effect
 	}
 
+	#[must_use]
 	pub fn effective(mut self, effective: Specifier<Tz>) -> Self {
 		self.effective = Some(effective);
 		self
 	}
 
+	#[must_use]
 	pub fn expires(mut self, expires: Specifier<Tz>) -> Self {
 		self.expires = Some(expires);
 		self

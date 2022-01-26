@@ -18,6 +18,7 @@ impl<'schedule, Tz: TimeZone> Default for Space<'schedule, Tz> {
 }
 
 impl<'schedule, Tz: TimeZone> Space<'schedule, Tz> {
+	#[must_use]
 	pub fn schedule(mut self, schedule: Schedule<'schedule, Tz>) -> Self {
 		self.schedules.push(schedule);
 		self

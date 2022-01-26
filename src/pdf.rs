@@ -345,6 +345,7 @@ impl Pdf {
 		Self::default()
 	}
 
+	#[must_use]
 	pub fn version(mut self, version: &str) -> Self {
 		self.version = Some(version.to_string());
 		self

@@ -2,7 +2,7 @@ use chrono::{prelude::*, DateTime, TimeZone};
 
 /// A specifier for when something happens.
 #[allow(dead_code)]
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, PartialEq, Eq)]
 pub enum Specifier<Tz: TimeZone> {
 	/// A pattern of days and times which must be computed against to give a
 	/// definitive answer.

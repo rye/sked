@@ -1,3 +1,6 @@
+#![deny(clippy::all)]
+#![warn(clippy::cargo, clippy::pedantic, clippy::cognitive_complexity)]
+
 use lopdf::{Document, Object, ObjectId};
 
 #[cfg(feature = "simple_logger")]
@@ -20,7 +23,7 @@ fn main() {
 		.expect("couldn't init simple_logger");
 
 	let file = env::args().nth(1).unwrap();
-	println!("Loading from {}...", file);
+	println!("Loading from {file}...");
 
 	let path = path::Path::new(&file);
 

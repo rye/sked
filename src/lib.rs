@@ -1,3 +1,6 @@
+#![deny(clippy::all)]
+#![warn(clippy::cargo, clippy::pedantic, clippy::cognitive_complexity)]
+
 mod exception;
 mod part;
 pub mod pdf;

@@ -21,21 +21,21 @@ pub enum Operation {
 
 	SetTextFontAndSize {
 		name: Vec<u8>,
-		size: f64,
+		size: f32,
 	},
 	SetCharacterSpacing {
-		spacing: f64,
+		spacing: f32,
 	},
 	SetWordSpacing {
-		spacing: f64,
+		spacing: f32,
 	},
 	SetTextMatrixAndTextLineMatrix {
-		a: f64,
-		b: f64,
-		c: f64,
-		d: f64,
-		e: f64,
-		f: f64,
+		a: f32,
+		b: f32,
+		c: f32,
+		d: f32,
+		e: f32,
+		f: f32,
 	},
 	ShowText {
 		body: String,
@@ -48,20 +48,20 @@ pub enum Operation {
 	RestoreGraphicsState,
 
 	MoveTextPosition {
-		t_x: f64,
-		t_y: f64,
+		t_x: f32,
+		t_y: f32,
 	},
 	MoveTextPositionAndSetLeading {
-		t_x: f64,
-		t_y: f64,
+		t_x: f32,
+		t_y: f32,
 	},
 	MoveToStartOfNextLine,
 
 	AppendRectangleToPath {
-		x: f64,
-		y: f64,
-		width: f64,
-		height: f64,
+		x: f32,
+		y: f32,
+		width: f32,
+		height: f32,
 	},
 	FillPathUsingNonzeroWindingNumberRule,
 	FillPathUsingNonzeroWindingNumberRuleObsolete,
@@ -89,7 +89,7 @@ pub struct GraphicsState {
 }
 
 pub struct CoordinateSpace {
-	origin: [f64; 2],
+	origin: [f32; 2],
 	orientation: ([f64; 2], [f64; 2]),
 	axis_length: (f64, f64),
 }
@@ -133,7 +133,7 @@ impl CoordinateSpace {
 			_ => unreachable!(),
 		};
 
-		let media_box: Vec<f64> = dictionary
+		let media_box: Vec<f32> = dictionary
 			.get(b"MediaBox")
 			.map(|object| match object {
 				Object::Array(array) => array
@@ -148,7 +148,7 @@ impl CoordinateSpace {
 			})
 			.ok()
 			.unwrap();
-		let crop_box: Vec<f64> = dictionary
+		let crop_box: Vec<f32> = dictionary
 			.get(b"CropBox")
 			.map(|object| match object {
 				Object::Array(array) => array
@@ -163,7 +163,7 @@ impl CoordinateSpace {
 			})
 			.unwrap_or(media_box);
 
-		let origin: [f64; 2] = [crop_box[0], crop_box[1]];
+		let origin: [f32; 2] = [crop_box[0], crop_box[1]];
 		// TODO fix?
 		let orientation: ([f64; 2], [f64; 2]) = ([1.0, 0.0], [0.0, 1.0]);
 		let axis_length: (f64, f64) = (1.0, 1.0);
@@ -185,10 +185,10 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 		/// Since `Object::as_f64` fails if `Object` is not a `Object::Real`, this
 		/// function can coerce an `Object::Integer` to an `Object::Real`, and will
 		/// unwrap into an `Option<f64>` if either of those variants are given.
-		fn to_f64(object: &Object) -> Option<f64> {
+		fn to_f32(object: &Object) -> Option<f32> {
 			match object {
 				Object::Real(x) => Some(*x),
-				Object::Integer(x) => f64::try_from(i32::try_from(*x).ok()?).ok(),
+				Object::Integer(x) => todo!(),
 				_ => None,
 			}
 		}
@@ -235,28 +235,28 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				Ok(Self::SetColorForNonstrokingOperations)
 			}
 
-			("Tf", opds) => match (opds.get(0), opds.get(1).and_then(to_f64)) {
+			("Tf", opds) => match (opds.get(0), opds.get(1).and_then(to_f32)) {
 				(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
 					name: name.clone(),
 					size,
 				}),
 				_ => todo!(),
 			},
-			("Tc", opds) => match opds.get(0).and_then(to_f64) {
+			("Tc", opds) => match opds.get(0).and_then(to_f32) {
 				Some(spacing) => Ok(Self::SetCharacterSpacing { spacing }),
 				_ => Err(error::ParseError::OperandType),
 			},
-			("Tw", opds) => match opds.get(0).and_then(to_f64) {
+			("Tw", opds) => match opds.get(0).and_then(to_f32) {
 				Some(spacing) => Ok(Self::SetWordSpacing { spacing }),
 				_ => Err(error::ParseError::OperandType),
 			},
 			("Tm", opds) => match (
-				opds.get(0).and_then(to_f64),
-				opds.get(1).and_then(to_f64),
-				opds.get(2).and_then(to_f64),
-				opds.get(3).and_then(to_f64),
-				opds.get(4).and_then(to_f64),
-				opds.get(5).and_then(to_f64),
+				opds.get(0).and_then(to_f32),
+				opds.get(1).and_then(to_f32),
+				opds.get(2).and_then(to_f32),
+				opds.get(3).and_then(to_f32),
+				opds.get(4).and_then(to_f32),
+				opds.get(5).and_then(to_f32),
 			) {
 				// N.B. In the PDF spec these use the names a, b, c, d, e, and f; these
 				// are used as generic parameters in the 3x3 transformation matrices,
@@ -301,21 +301,21 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			("q", _) => Ok(Self::SaveGraphicsState),
 			("Q", _) => Ok(Self::RestoreGraphicsState),
 
-			("Td", opds) => match (opds.get(0).and_then(to_f64), opds.get(1).and_then(to_f64)) {
+			("Td", opds) => match (opds.get(0).and_then(to_f32), opds.get(1).and_then(to_f32)) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPosition { t_x, t_y }),
 				_ => todo!(),
 			},
-			("TD", opds) => match (opds.get(0).and_then(to_f64), opds.get(1).and_then(to_f64)) {
+			("TD", opds) => match (opds.get(0).and_then(to_f32), opds.get(1).and_then(to_f32)) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPositionAndSetLeading { t_x, t_y }),
 				_ => todo!(),
 			},
 			("T*", _) => Ok(Self::MoveToStartOfNextLine),
 
 			("re", opds) => match (
-				opds.get(0).and_then(to_f64),
-				opds.get(1).and_then(to_f64),
-				opds.get(2).and_then(to_f64),
-				opds.get(3).and_then(to_f64),
+				opds.get(0).and_then(to_f32),
+				opds.get(1).and_then(to_f32),
+				opds.get(2).and_then(to_f32),
+				opds.get(3).and_then(to_f32),
 			) {
 				(Some(x), Some(y), Some(width), Some(height)) => Ok(Self::AppendRectangleToPath {
 					x,

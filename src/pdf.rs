@@ -200,13 +200,13 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			("BT", _) => Ok(Self::BeginTextObject),
 			("ET", _) => Ok(Self::EndTextObject),
 
-			("CS", opds) => match opds.get(0) {
+			("CS", opds) => match opds.first() {
 				Some(Object::Name(name)) => {
 					Ok(Self::SetColorSpaceForStrokingOperations { name: name.clone() })
 				}
 				_ => todo!(),
 			},
-			("cs", opds) => match opds.get(0) {
+			("cs", opds) => match opds.first() {
 				Some(Object::Name(name)) => {
 					Ok(Self::SetColorSpaceForNonstrokingOperations { name: name.clone() })
 				}
@@ -235,6 +235,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				Ok(Self::SetColorForNonstrokingOperations)
 			}
 
+			#[allow(clippy::get_first)]
 			("Tf", opds) => match (opds.get(0), opds.get(1).and_then(to_f32)) {
 				(Some(Object::Name(name)), Some(size)) => Ok(Self::SetTextFontAndSize {
 					name: name.clone(),
@@ -242,15 +243,16 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				}),
 				_ => todo!(),
 			},
-			("Tc", opds) => match opds.get(0).and_then(to_f32) {
+			("Tc", opds) => match opds.first().and_then(to_f32) {
 				Some(spacing) => Ok(Self::SetCharacterSpacing { spacing }),
 				_ => Err(error::ParseError::OperandType),
 			},
-			("Tw", opds) => match opds.get(0).and_then(to_f32) {
+			("Tw", opds) => match opds.first().and_then(to_f32) {
 				Some(spacing) => Ok(Self::SetWordSpacing { spacing }),
 				_ => Err(error::ParseError::OperandType),
 			},
 			("Tm", opds) => match (
+				#[allow(clippy::get_first)]
 				opds.get(0).and_then(to_f32),
 				opds.get(1).and_then(to_f32),
 				opds.get(2).and_then(to_f32),
@@ -266,7 +268,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				}
 				_ => Err(error::ParseError::OperandType),
 			},
-			("TJ", opds) => match opds.get(0) {
+			("TJ", opds) => match opds.first() {
 				Some(Object::Array(array)) => {
 					let body: error::Result<String> = array
 						.iter()
@@ -290,7 +292,7 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 				}),
 				_ => Err(error::ParseError::OperandType),
 			},
-			("Tj", opds) => match opds.get(0) {
+			("Tj", opds) => match opds.first() {
 				Some(Object::String(bytes, _format)) => {
 					let body = String::from_utf8(bytes.clone()).map_err(Into::into);
 					body.map(|body: String| Self::ShowText { body })
@@ -301,16 +303,19 @@ impl core::convert::TryFrom<lopdf::content::Operation> for Operation {
 			("q", _) => Ok(Self::SaveGraphicsState),
 			("Q", _) => Ok(Self::RestoreGraphicsState),
 
+			#[allow(clippy::get_first)]
 			("Td", opds) => match (opds.get(0).and_then(to_f32), opds.get(1).and_then(to_f32)) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPosition { t_x, t_y }),
 				_ => todo!(),
 			},
+			#[allow(clippy::get_first)]
 			("TD", opds) => match (opds.get(0).and_then(to_f32), opds.get(1).and_then(to_f32)) {
 				(Some(t_x), Some(t_y)) => Ok(Self::MoveTextPositionAndSetLeading { t_x, t_y }),
 				_ => todo!(),
 			},
 			("T*", _) => Ok(Self::MoveToStartOfNextLine),
 
+			#[allow(clippy::get_first)]
 			("re", opds) => match (
 				opds.get(0).and_then(to_f32),
 				opds.get(1).and_then(to_f32),

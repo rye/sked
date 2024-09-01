@@ -11,5 +11,5 @@ default = ["simple_logger"]
 [dependencies]
 chrono = "0.4.24"
 log = "0.4.17"
-lopdf = "0.31.0"
+lopdf = "0.34.0"
 simple_logger = { version = "4.1.0", optional = true }
